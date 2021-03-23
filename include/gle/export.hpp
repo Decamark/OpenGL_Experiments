@@ -5,9 +5,20 @@
 
 namespace gle
 {
-  void export_to_png(GLFWwindow* window, const char* path)
+  void export_to_png(GLFWwindow* window, const char* filepath)
   {
-    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, image);
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    GLsizei n_channels = 3;
+    GLsizei stride = n_channels * width;
+    stride += (stride % 4) ? (4 - stride % 4) : 0;
+    GLsizei bufsize = stride * height;
+    std::vector<char> buffer(bufsize);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadBuffer(GL_FRONT);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+    stbi_flip_vertically_on_write(true);
+    stbi_write_png(filepath, width, height, n_channels, buffer.data(), stride);
   }
 }
 

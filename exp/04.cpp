@@ -6,6 +6,7 @@
 #include <gle/export.hpp>
 #include <gle/shape.hpp>
 #include <learnopengl/shader_m.h>
+#include <unistd.h>
 
 int main()
 {
@@ -51,11 +52,14 @@ int main()
     // shader.setMat4("projection", projection);
 
   line.draw();
+  glFlush();
     // tri.draw();
 
-  gle::export_to_png(window, "./coord_tex.png");
+  // usleep(1000000);
 
   glfwSwapBuffers(window);
-  glfwPollEvents();    
-    // }
+  // glfwPollEvents();    
+
+  gle::export_to_png(window, "./coord_tex.png");
+  //   }
 }
