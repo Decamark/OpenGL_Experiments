@@ -9,8 +9,8 @@ namespace gle
   {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
-    GLsizei n_channels = 3;
-    GLsizei stride = n_channels * width;
+    GLsizei nr_channels = 3;
+    GLsizei stride = nr_channels * width;
     stride += (stride % 4) ? (4 - stride % 4) : 0;
     GLsizei bufsize = stride * height;
     std::vector<char> buffer(bufsize);
@@ -18,7 +18,7 @@ namespace gle
     glReadBuffer(GL_FRONT);
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
     stbi_flip_vertically_on_write(true);
-    stbi_write_png(filepath, width, height, n_channels, buffer.data(), stride);
+    stbi_write_png(filepath, width, height, nr_channels, buffer.data(), stride);
   }
 }
 
