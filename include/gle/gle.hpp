@@ -14,6 +14,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+float WIDTH = 800, HEIGHT = 600;
+
 namespace gle
 {
   // glfw: whenever the window size changed (by OS or user resize) this callback function executes
