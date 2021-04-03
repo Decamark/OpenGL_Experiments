@@ -19,10 +19,11 @@ int main()
   glfwSetCursorPosCallback(window, mouse_callback);
   glfwSetScrollCallback(window, scroll_callback);
 
+  // Shader shader("exp/05_coord.vs", "exp/05_coord.gs", "exp/05_coord.fs");
   Shader shader("exp/05_coord.vs", "exp/05_coord.fs");
   shader.use();
 
-  gle::Cartesian coord(&shader);
+  gle::Cartesian coord(&shader, 20);
 
   // configure global opengl state
   // -----------------------------
@@ -35,7 +36,9 @@ int main()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), WIDTH / HEIGHT, 0.1f, 100.0f);
+    shader.setMat4("model", model);
     shader.setMat4("view", camera.GetViewMatrix());
     shader.setMat4("projection", projection);
 
