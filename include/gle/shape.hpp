@@ -2,13 +2,14 @@
 #define _GLE_SHAPE
 
 #include <gle/gle.hpp>
+#include <learnopengl/shader_m.h>
 
 namespace gle
 {
   class Shape
   {
   public:
-    unsigned int vao;
+    unsigned int vao, guide_vao;
     unsigned int vbo[3];
     glm::mat4 model;
 
@@ -38,10 +39,6 @@ namespace gle
     }
 
     virtual void draw() = 0;
-    void draw_guide()
-    {
-      
-    }
 
     void debug()
     {
@@ -145,9 +142,9 @@ namespace gle
       std::vector<float> vertices =
         {  0.5f*w,  0.5f*h, 0.0f,
            0.5f*w, -0.5f*h, 0.0f,
-          -0.5f*w,  0.5f*h, 0.0f,
-          -0.5f*w,  0.5f*h, 0.0f,
-          -0.5f*w, -0.5f*h, 0.0f,
+           -0.5f*w,  0.5f*h, 0.0f,
+           -0.5f*w,  0.5f*h, 0.0f,
+           -0.5f*w, -0.5f*h, 0.0f,
            0.5f*w, -0.5f*h, 0.0f
         };
       std::vector<float> texpos =
@@ -179,6 +176,75 @@ namespace gle
         glBindTexture(GL_TEXTURE_2D, texture);
       }
       glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
+  };
+
+  class Cube : public Shape
+  {
+  private:
+    Shader* shader;
+  public:
+    Cube(Shader* shader, float w = 1.0f) : shader(shader)
+    {
+      std::vector<float> vertices =
+        { -0.5f, -0.5f, -0.5f,
+           0.5f, -0.5f, -0.5f,
+           0.5f,  0.5f, -0.5f,
+           0.5f,  0.5f, -0.5f,
+          -0.5f,  0.5f, -0.5f,
+          -0.5f, -0.5f, -0.5f,
+
+          -0.5f, -0.5f,  0.5f,
+           0.5f, -0.5f,  0.5f,
+           0.5f,  0.5f,  0.5f,
+           0.5f,  0.5f,  0.5f,
+          -0.5f,  0.5f,  0.5f,
+          -0.5f, -0.5f,  0.5f,
+
+          -0.5f,  0.5f,  0.5f,
+          -0.5f,  0.5f, -0.5f,
+          -0.5f, -0.5f, -0.5f,
+          -0.5f, -0.5f, -0.5f,
+          -0.5f, -0.5f,  0.5f,
+          -0.5f,  0.5f,  0.5f,
+
+           0.5f,  0.5f,  0.5f,
+           0.5f,  0.5f, -0.5f,
+           0.5f, -0.5f, -0.5f,
+           0.5f, -0.5f, -0.5f,
+           0.5f, -0.5f,  0.5f,
+           0.5f,  0.5f,  0.5f,
+
+          -0.5f, -0.5f, -0.5f,
+           0.5f, -0.5f, -0.5f,
+           0.5f, -0.5f,  0.5f,
+           0.5f, -0.5f,  0.5f,
+          -0.5f, -0.5f,  0.5f,
+          -0.5f, -0.5f, -0.5f,
+
+          -0.5f,  0.5f, -0.5f,
+           0.5f,  0.5f, -0.5f,
+           0.5f,  0.5f,  0.5f,
+           0.5f,  0.5f,  0.5f,
+          -0.5f,  0.5f,  0.5f,
+          -0.5f,  0.5f, -0.5f
+        };
+      for (auto& v : vertices)
+        v *= w;
+
+      glGenVertexArrays(1, &vao);
+      glBindVertexArray(vao);
+      bind(vertices);
+
+      model = glm::mat4(1.0f);
+    }
+
+    void draw()
+    {
+      shader->setMat4("model", model);
+      glBindVertexArray(vao);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glDrawArrays(GL_TRIANGLES, 0, 36);
     }
   };
 }

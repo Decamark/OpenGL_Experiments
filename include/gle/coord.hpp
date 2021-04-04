@@ -11,9 +11,10 @@ namespace gle
   private:
     Shader* shader;
     float d;
-    std::vector<float> vertices;
-    unsigned int vao;
-    unsigned int vbo;
+    std::vector<float> vertices, guide_vs;
+    unsigned int vao, guide_vao;
+    unsigned int vbo, guide_vbo;
+    glm::mat4 model;
   public:
     Cartesian(Shader* shader, float d = 10) : shader(shader), d(d)
     {
@@ -78,13 +79,59 @@ namespace gle
 
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
       glEnableVertexAttribArray(0);
+
+      // guide
+      guide_vs = std::vector(18, 0.0f);
+      glGenVertexArrays(1, &guide_vao);
+      glBindVertexArray(guide_vao);
+
+      glGenBuffers(1, &guide_vbo);
+      glBindBuffer(GL_ARRAY_BUFFER, guide_vbo);
+      glBufferData(GL_ARRAY_BUFFER, 18*sizeof(float), &guide_vs[0], GL_DYNAMIC_DRAW);
+
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+      glEnableVertexAttribArray(0);
+
+      model = glm::mat4(1.0f);
     }
 
     void draw()
     {
+      shader->setMat4("model", model);
       glBindVertexArray(vao);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_LINES, 0, 12*(d+1));
+    }
+
+    void draw_guide(glm::vec3 pos)
+    {
+      shader->setMat4("model", model);
+
+      guide_vs[0]  = pos.x;
+      guide_vs[1]  = pos.y;
+      guide_vs[2]  = pos.z;
+      guide_vs[3]  = 0.0f;
+      guide_vs[4]  = pos.y;
+      guide_vs[5]  = pos.z;
+      guide_vs[6]  = pos.x;
+      guide_vs[7]  = pos.y;
+      guide_vs[8]  = pos.z;
+      guide_vs[9]  = pos.x;
+      guide_vs[10] = 0.0f;
+      guide_vs[11] = pos.z;
+      guide_vs[12] = pos.x;
+      guide_vs[13] = pos.y;
+      guide_vs[14] = pos.z;
+      guide_vs[15] = pos.x;
+      guide_vs[16] = pos.y;
+      guide_vs[17] = 0.0f;
+
+      glBindBuffer(GL_ARRAY_BUFFER, guide_vbo);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, 18*sizeof(float), &guide_vs[0]);
+
+      glBindVertexArray(guide_vao);
+      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glDrawArrays(GL_LINES, 0, 18);
     }
   };
 
