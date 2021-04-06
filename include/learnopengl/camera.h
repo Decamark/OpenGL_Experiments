@@ -53,8 +53,6 @@ public:
     Yaw = yaw;
     Pitch = pitch;
     updateCameraVectors();
-
-    last_frame = glfwGetTime();
   }
   // constructor with scalar values
   Camera(GLFWwindow* window,
@@ -67,8 +65,6 @@ public:
     Yaw = yaw;
     Pitch = pitch;
     updateCameraVectors();
-
-    last_frame = glfwGetTime();
   }
 
   // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -125,33 +121,23 @@ public:
 
   // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
   // ---------------------------------------------------------------------------------------------------------
-  void processInput()
+  void processInput(float dt)
   {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
 
-    float rate = tick(glfwGetTime());
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      this->ProcessKeyboard(FORWARD, rate);
+      this->ProcessKeyboard(FORWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      this->ProcessKeyboard(BACKWARD, rate);
+      this->ProcessKeyboard(BACKWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-      this->ProcessKeyboard(LEFT, rate);
+      this->ProcessKeyboard(LEFT, dt);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-      this->ProcessKeyboard(RIGHT, rate);
+      this->ProcessKeyboard(RIGHT, dt);
   }
 
 private:
   GLFWwindow* window;
-  float last_frame;
-
-  float tick(float current_frame)
-  {
-    float rate = current_frame - last_frame;
-    last_frame = current_frame;
-    return rate;
-  }
 
   // calculates the front vector from the Camera's (updated) Euler Angles
   void updateCameraVectors()
