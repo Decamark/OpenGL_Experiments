@@ -2,6 +2,9 @@
  * 07: Time
  */
 
+// #include <unistd.h>
+#include <functional>
+
 #include <gle/gle.hpp>
 #include <gle/export.hpp>
 #include <gle/shape.hpp>
@@ -9,8 +12,6 @@
 #include <gle/time.hpp>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
-#include <unistd.h>
-#include <functional>
 
 auto* window = gle::setup(WIDTH, HEIGHT, "Practice");
 Camera camera(window, glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -45.0f);
@@ -27,7 +28,7 @@ int main()
   // -----------------------------
   glEnable(GL_DEPTH_TEST);
 
-  Shader shader("exp/06.vs", "exp/06.fs");
+  Shader shader("exp/07.vs", "exp/07.fs");
   shader.use();
 
   gle::Cartesian coord(&shader, 50);
@@ -48,9 +49,8 @@ int main()
     shader.setMat4("view", camera.GetViewMatrix());
     shader.setMat4("projection", projection);
 
-    // cube.translate({0.01f, glm::sin(glfwGetTime())*0.1, 0.01f});
-    cube.translate({0.01f, glm::sin(clock.t)*0.1, 0.01f});
-    // cube.move(clock.t);
+    std::function<void(double)> motion = [&cube](double t) { cube.translate({0.01f, glm::sin(t)*0.1, 0.01f}); };
+    cube.move(motion, clock.t);
     cube.draw();
 
     coord.draw();

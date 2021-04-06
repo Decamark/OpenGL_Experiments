@@ -1,6 +1,8 @@
 #ifndef _GLE_SHAPE
 #define _GLE_SHAPE
 
+#include <functional>
+
 #include <gle/gle.hpp>
 #include <learnopengl/shader_m.h>
 
@@ -36,6 +38,11 @@ namespace gle
     void rotate(float angle, glm::vec3 axis)
     {
       model = glm::rotate(model, glm::radians(angle), axis);
+    }
+
+    void move(std::function<void(double)> motion, double t)
+    {
+      motion(t);
     }
 
     virtual void draw() = 0;
