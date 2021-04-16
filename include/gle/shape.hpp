@@ -25,9 +25,9 @@ namespace gle
       glEnableVertexAttribArray(i);
     }
 
-    void set_pos(glm::vec3 pos)
+    void setPos(float x, float y, float z)
     {
-      model = glm::translate(glm::mat4(1.0), pos);
+      model = glm::translate(glm::mat4(1.0), {x,y,z});
     }
 
     void translate(glm::vec3 move)
