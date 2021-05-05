@@ -27,7 +27,7 @@ int main()
   // -----------------------------
   glEnable(GL_DEPTH_TEST);
 
-  Shader shader("exp/08.vs", "exp/08.fs");
+  Shader shader("exp/09.vs", "exp/09.fs");
   shader.use();
 
   gle::Cartesian coord(&shader, 50);
@@ -38,7 +38,7 @@ int main()
   while (!glfwWindowShouldClose(window))
   {
     camera.processInput(clock.tick());
-    std::cout << clock.t << std::endl;
+    // std::cout << clock.t << std::endl;
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -48,11 +48,13 @@ int main()
     shader.setMat4("projection", projection);
 
     std::function<void(double)> motion = [&cube](double t) {
-      float h = 10.0f-9.8/2*t*t;
+      glm::vec3 v0 = {15.0f, 25.0f, 15.0f};
+      float h = v0.y*t - 4.9*t*t;
+
       if (h >= 0)
-        cube.setPos(10.0f, h, 10.0f);
+        cube.setPos(v0.x*t, h, v0.z*t);
       else
-        cube.setPos(10.0f, 0.0f, 10.0f);
+        cube.setPos(cube.model[3].x, 0.0f, cube.model[3].z);
     };
     cube.move(motion, clock.t);
     cube.draw();
