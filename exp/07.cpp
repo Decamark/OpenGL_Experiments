@@ -9,25 +9,18 @@
 #include <gle/shape.hpp>
 #include <gle/coord.hpp>
 #include <gle/time.hpp>
+#include <gle/shader.hpp>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
-auto* window = gle::setup(WIDTH, HEIGHT, "Practice");
+auto* window = gle::setup(800, 600, "Practice");
 Camera camera(window, glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -45.0f);
 
 int main()
 {
-  glfwSetCursorPosCallback(window, mouse_callback);
-  glfwSetScrollCallback(window, scroll_callback);
-
-  // tell GLFW to capture our mouse
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-  // configure global opengl state
-  // -----------------------------
-  glEnable(GL_DEPTH_TEST);
-
-  Shader shader("exp/07.vs", "exp/07.fs");
+  // Shader shader("exp/07.vs", "exp/07.fs");
+  // shader.use();
+  Shader shader = GLE_SHADER_3D_COLOR;
   shader.use();
 
   gle::Cartesian coord(&shader, 50);
@@ -44,7 +37,7 @@ int main()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), WIDTH / HEIGHT, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     shader.setMat4("view", camera.GetViewMatrix());
     shader.setMat4("projection", projection);
 

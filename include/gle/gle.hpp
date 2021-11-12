@@ -14,7 +14,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-float WIDTH = 800, HEIGHT = 600;
+#include <gle/shader.hpp>
+
+#include <learnopengl/camera.h>
 
 namespace gle
 {
@@ -61,6 +63,18 @@ namespace gle
     }
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+
+    // tell GLFW to capture our mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
+
+    buildShaders();
 
     return window;
   }
