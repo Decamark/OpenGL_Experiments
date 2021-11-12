@@ -1,6 +1,7 @@
 #ifndef _GLE_SHAPE
 #define _GLE_SHAPE
 
+#include <iostream>
 #include <functional>
 
 #include <gle/gle.hpp>
@@ -10,19 +11,43 @@ namespace gle
 {
   class Shape
   {
+  protected:
+    unsigned int vao, vbo;
   public:
-    unsigned int vao, guide_vao;
-    unsigned int vbo[3];
+    // unsigned int vao, guide_vao;
     glm::mat4 model;
 
-    void bind(std::vector<float> vertices, int size = 3, int i = 0)
+    void partition(const std::vector<float>& vertices)
     {
-      glGenBuffers(1, &vbo[i]);
-      glBindBuffer(GL_ARRAY_BUFFER, vbo[i]);
+      glGenVertexArrays(1, &vao);
+      glBindVertexArray(vao);
+
+      glGenBuffers(1, &vbo);
+      // bind VBO to GL_ARRAY_BUFFER
+      glBindBuffer(GL_ARRAY_BUFFER, vbo);
       glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
-      glVertexAttribPointer(i, size, GL_FLOAT, GL_FALSE, size * sizeof(float), (void*)0);
-      glEnableVertexAttribArray(i);
+      // format current VAO with currently bound VBO
+      switch (vertices.size()) {
+      case (3+2)*6: /* Tetragon (x,y,z,s,t) */
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
+        glEnableVertexAttribArray(1);
+        break;
+
+      case 3*3:   /* Triangle (x,y,z) */
+      case 3*6:   /* Tetragon (x,y,z) */
+      case 3*6*6: /* Cube     (x,y,z) */
+      default:
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
+        break;
+      }
+
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+      glBindVertexArray(0);
     }
 
     void setPos(float x, float y, float z)
@@ -52,9 +77,7 @@ namespace gle
       for (int i=0; i<4; i++)
       {
         for (int j=0; j<4; j++)
-        {
           std::cout << model[j][i] << ' ';
-        }
         std::cout << std::endl;
       }
     }
@@ -65,16 +88,16 @@ namespace gle
   public:
     Line(std::vector<float> vertices)
     {
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-      bind(vertices);
+      partition(vertices);
     }
 
     void draw()
     {
       glBindVertexArray(vao);
+      glBindBuffer(GL_ARRAY_BUFFER, vbo);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_LINES, 0, 2);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
   };
 
@@ -83,16 +106,16 @@ namespace gle
   public:
     Triangle(std::vector<float> vertices)
     {
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-      bind(vertices);
+      partition(vertices);
     }
 
     void draw()
     {
       glBindVertexArray(vao);
+      // glBindBuffer(GL_ARRAY_BUFFER, vbo);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_TRIANGLES, 0, 3);
+      // glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
   };
 
@@ -101,7 +124,7 @@ namespace gle
   public:
     unsigned int texture;
 
-    void bind_texture(const char* filepath)
+    void load_texture(const char* filepath)
     {
       glGenTextures(1, &texture);
       glBindTexture(GL_TEXTURE_2D, texture);
@@ -118,28 +141,23 @@ namespace gle
         glGenerateMipmap(GL_TEXTURE_2D);
       }
       else
-      {
         std::cout << "Failed to load texture" << std::endl;
-      }
       stbi_image_free(data);
     }
 
     Tetragon(std::vector<float> vertices)
     {
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-      bind(vertices);
+      partition(vertices);
     }
 
-    Tetragon(std::vector<float> vertices, std::vector<float> texpos, const char* filepath,
+    Tetragon(std::vector<float> vertices, const char* filepath,
              glm::mat4 model = glm::mat4(1.0f))
     {
-      glGenVertexArrays(1, &vao);
+      // glGenVertexArrays(1, &vao);
       glBindVertexArray(vao);
-      bind(vertices);
-      bind(texpos, 2, 1);
+      partition(vertices);
 
-      bind_texture(filepath);
+      load_texture(filepath);
 
       this->model = model;
     }
@@ -147,28 +165,17 @@ namespace gle
     Tetragon(const char* filepath, float w = 1.0f, float h = 1.0f)
     {
       std::vector<float> vertices =
-        {  0.5f*w,  0.5f*h, 0.0f,
-           0.5f*w, -0.5f*h, 0.0f,
-           -0.5f*w,  0.5f*h, 0.0f,
-           -0.5f*w,  0.5f*h, 0.0f,
-           -0.5f*w, -0.5f*h, 0.0f,
-           0.5f*w, -0.5f*h, 0.0f
-        };
-      std::vector<float> texpos =
-        { 1.0f, 1.0f,
-          1.0f, 0.0f,
-          0.0f, 1.0f,
-          0.0f, 1.0f,
-          0.0f, 0.0f,
-          1.0f, 0.0f
+        {  0.5f*w,  0.5f*h, 0.0f, 1.0f, 1.0f,
+           0.5f*w, -0.5f*h, 0.0f, 1.0f, 0.0f,
+          -0.5f*w,  0.5f*h, 0.0f, 0.0f, 1.0f,
+          -0.5f*w,  0.5f*h, 0.0f, 0.0f, 1.0f,
+          -0.5f*w, -0.5f*h, 0.0f, 0.0f, 0.0f,
+           0.5f*w, -0.5f*h, 0.0f, 1.0f, 0.0f
         };
 
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-      bind(vertices);
-      bind(texpos, 2, 1);
+      partition(vertices);
 
-      bind_texture(filepath);
+      load_texture(filepath);
 
       this->model = model;
     }
@@ -239,9 +246,7 @@ namespace gle
       for (auto& v : vertices)
         v *= w;
 
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-      bind(vertices);
+      partition(vertices);
 
       model = glm::mat4(1.0f);
     }
@@ -249,9 +254,15 @@ namespace gle
     void draw()
     {
       shader->setMat4("model", model);
+
       glBindVertexArray(vao);
+      // glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_TRIANGLES, 0, 36);
+
+      // glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glBindVertexArray(0);
     }
   };
 }

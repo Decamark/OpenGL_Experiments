@@ -6,7 +6,6 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 TexPos;
 out vec3 Color;
 
 void main()
