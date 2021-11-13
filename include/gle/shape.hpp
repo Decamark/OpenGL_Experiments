@@ -24,11 +24,14 @@ namespace gle
     Shape(Shader* shader) : shader(shader) {}
     Shape(std::vector<float> vertices) {}
 
-    void partition(std::vector<float>& vertices)
+    static std::pair<unsigned int,unsigned int>
+    partition(std::vector<float>& vertices)
     {
+      unsigned int vao;
       glGenVertexArrays(1, &vao);
       glBindVertexArray(vao);
 
+      unsigned int vbo;
       glGenBuffers(1, &vbo);
       // bind VBO to GL_ARRAY_BUFFER
       glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -55,6 +58,39 @@ namespace gle
       glBindBuffer(GL_ARRAY_BUFFER, 0);
 
       glBindVertexArray(0);
+
+      return {vao,vbo};
+    }
+
+    static std::pair<unsigned int, unsigned int>
+    partition(std::vector<float> vertices, int count, ...)
+    {
+      unsigned int vao;
+      glGenVertexArrays(1, &vao);
+      glBindVertexArray(vao);
+
+      unsigned int vbo;
+      glGenBuffers(1, &vbo);
+      // bind VBO to GL_ARRAY_BUFFER
+      glBindBuffer(GL_ARRAY_BUFFER, vbo);
+      glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
+
+      va_list sizes;
+      va_start(sizes, count);
+      int offset = 0;
+      for (int i=0; i<count; i++) {
+        int size = va_arg(sizes, int);
+        int stride = offset + size;
+        glVertexAttribPointer(i, size, GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)(offset*sizeof(float)));
+        glEnableVertexAttribArray(i);
+        offset += size;
+      }
+
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+      glBindVertexArray(0);
+
+      return {vao,vbo};
     }
 
     void load_texture(const char* filepath)
@@ -118,7 +154,7 @@ namespace gle
   public:
     Line(std::vector<float> vertices)
     {
-      partition(vertices);
+      std::tie(vao,vbo) = partition(vertices);
     }
 
     void draw()
@@ -135,7 +171,7 @@ namespace gle
   public:
     Triangle(std::vector<float> vertices)
     {
-      partition(vertices);
+      std::tie(vao,vbo) = partition(vertices);
     }
 
     void draw()
@@ -155,7 +191,7 @@ namespace gle
     Tetragon(std::vector<float> vertices, const char* filepath,
              glm::mat4 model = glm::mat4(1.0f)) : Shape(vertices)
     {
-      partition(vertices);
+      std::tie(vao,vbo) = partition(vertices);
 
       load_texture(filepath);
 
@@ -172,7 +208,7 @@ namespace gle
        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
         0.5f, -0.5f, 0.0f, 1.0f, 0.0f
       };
-      partition(vertices);
+      std::tie(vao,vbo) = partition(vertices);
 
       load_texture(filepath);
 
@@ -240,7 +276,7 @@ namespace gle
         -0.5f,  0.5f,  0.5f,
         -0.5f,  0.5f, -0.5f
       };
-      partition(vertices);
+      std::tie(vao,vbo) = partition(vertices, 1, 3);
       model = glm::mat4(1.0f);
     }
 
