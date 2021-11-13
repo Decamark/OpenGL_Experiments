@@ -90,7 +90,7 @@ namespace gle
   public:
     Shader shader;
     unsigned int texture;
-    glm::mat4 model;
+    glm::mat4 model = glm::mat4(1.0f);
 
     Shape()
     {
@@ -283,7 +283,6 @@ namespace gle
         -0.5f,  0.5f, -0.5f
       };
       std::tie(vao,vbo) = partition(vertices, 1, 3);
-      model = glm::mat4(1.0f);
     }
 
     void draw()
