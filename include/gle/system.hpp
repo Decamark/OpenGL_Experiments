@@ -1,5 +1,5 @@
-#ifndef _GLE_COORD
-#define _GLE_COORD
+#ifndef _GLE_SYSTEM
+#define _GLE_SYSTEM
 
 #include <gle/shape.hpp>
 #include <learnopengl/shader_m.h>
@@ -10,10 +10,9 @@ namespace gle
   {
   private:
     float d;
-    std::vector<float> guide_vs;
     unsigned int vao,       vbo;
     unsigned int guide_vao, guide_vbo;
-    glm::mat4 model;
+    glm::mat4 model = glm::mat4(1.0f);
   public:
     Shader shader;
 
@@ -107,15 +106,11 @@ namespace gle
         vs.push_back(0.4f);
         vs.push_back(0.4f);
       }
-
       std::tie(vao,vbo) = partition(vs, 2, 3, 3);
 
       // guide
-      guide_vs = std::vector(36, 0.0f);
-
+      std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
-
-      model = glm::mat4(1.0f);
     }
 
     void draw()
@@ -132,6 +127,7 @@ namespace gle
       shader.use();
       shader.setMat4("model", model);
 
+      std::vector<float> guide_vs(36, 0.0f);
       guide_vs[0]  = pos.x;
       guide_vs[1]  = pos.y;
       guide_vs[2]  = pos.z;
@@ -144,6 +140,7 @@ namespace gle
       guide_vs[9]  = 1.0f;
       guide_vs[10] = 0.0f;
       guide_vs[11] = 0.0f;
+
       guide_vs[12] = pos.x;
       guide_vs[13] = pos.y;
       guide_vs[14] = pos.z;
@@ -156,6 +153,7 @@ namespace gle
       guide_vs[21] = 0.0f;
       guide_vs[22] = 1.0f;
       guide_vs[23] = 0.0f;
+
       guide_vs[24] = pos.x;
       guide_vs[25] = pos.y;
       guide_vs[26] = pos.z;
