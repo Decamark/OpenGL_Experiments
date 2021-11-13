@@ -2,6 +2,7 @@
 #define _GLE_COORD
 
 #include <gle/shape.hpp>
+#include <gle/shader.hpp>
 #include <learnopengl/shader_m.h>
 
 namespace gle
@@ -11,99 +12,100 @@ namespace gle
   private:
     Shader* shader;
     float d;
-    std::vector<float> vertices, guide_vs;
-    unsigned int vao, guide_vao;
-    unsigned int vbo, guide_vbo;
+    std::vector<float> guide_vs;
+    unsigned int vao,       vbo;
+    unsigned int guide_vao, guide_vbo;
     glm::mat4 model;
   public:
-    Cartesian(Shader* shader, float d = 10) : shader(shader), d(d)
+    Cartesian(float d = 10, Shader* shader = &GLE_SHADER_3D_COLOR) : d(d), shader(shader)
     {
+      std::vector<float> vs;
       // xy-plane
       for (float y=0.0f; y<=d; y++) {
-        vertices.push_back(0.0f);
-        vertices.push_back(y);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(d);
-        vertices.push_back(y);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
+        vs.push_back(0.0f);
+        vs.push_back(y);
+        vs.push_back(0.0f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(d);
+        vs.push_back(y);
+        vs.push_back(0.0f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
       }
       for (float x=0.0f; x<=d; x++) {
-        vertices.push_back(x);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(x);
-        vertices.push_back(d);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
+        vs.push_back(x);
+        vs.push_back(0.0f);
+        vs.push_back(0.0f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(x);
+        vs.push_back(d);
+        vs.push_back(0.0f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
       }
       // yz-plane
       for (float y=0.0f; y<=d; y++) {
-        vertices.push_back(0.0f);
-        vertices.push_back(y);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.0f);
-        vertices.push_back(y);
-        vertices.push_back(d);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
+        vs.push_back(0.0f);
+        vs.push_back(y);
+        vs.push_back(0.0f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.0f);
+        vs.push_back(y);
+        vs.push_back(d);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
       }
       for (float z=0.0f; z<=d; z++) {
-        vertices.push_back(0.0f);
-        vertices.push_back(0.0f);
-        vertices.push_back(z);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.0f);
-        vertices.push_back(d);
-        vertices.push_back(z);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
+        vs.push_back(0.0f);
+        vs.push_back(0.0f);
+        vs.push_back(z);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.0f);
+        vs.push_back(d);
+        vs.push_back(z);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
       }
       // zx-plane
       for (float z=0.0f; z<=d; z++) {
-        vertices.push_back(0.0f);
-        vertices.push_back(0.0f);
-        vertices.push_back(z);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(d);
-        vertices.push_back(0.0f);
-        vertices.push_back(z);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
+        vs.push_back(0.0f);
+        vs.push_back(0.0f);
+        vs.push_back(z);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(d);
+        vs.push_back(0.0f);
+        vs.push_back(z);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
       }
       for (float x=0.0f; x<=d; x++) {
-        vertices.push_back(x);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(x);
-        vertices.push_back(0.0f);
-        vertices.push_back(d);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
-        vertices.push_back(0.4f);
+        vs.push_back(x);
+        vs.push_back(0.0f);
+        vs.push_back(0.0f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(x);
+        vs.push_back(0.0f);
+        vs.push_back(d);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
+        vs.push_back(0.4f);
       }
 
       glGenVertexArrays(1, &vao);
@@ -111,10 +113,12 @@ namespace gle
 
       glGenBuffers(1, &vbo);
       glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, vs.size()*sizeof(float), &vs[0], GL_STATIC_DRAW);
 
+      /* (x,y,z) */
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
       glEnableVertexAttribArray(0);
+      /* (r,g,b) */
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
       glEnableVertexAttribArray(1);
 
@@ -127,8 +131,10 @@ namespace gle
       glBindBuffer(GL_ARRAY_BUFFER, guide_vbo);
       glBufferData(GL_ARRAY_BUFFER, guide_vs.size()*sizeof(float), &guide_vs[0], GL_DYNAMIC_DRAW);
 
+      /* (x,y,z) */
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
       glEnableVertexAttribArray(0);
+      /* (r,g,b) */
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
       glEnableVertexAttribArray(1);
 
@@ -200,7 +206,7 @@ namespace gle
     Shader* shader;
     gle::Tetragon tetra;
   public:
-    CartesianA(Shader* shader) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
+    CartesianA(Shader* shader = &GLE_SHADER_3D_COLOR) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
     {
       shader->setInt("texture0", tetra.texture);
     }

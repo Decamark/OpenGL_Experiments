@@ -18,12 +18,7 @@ Camera camera(window, glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f
 
 int main()
 {
-  Shader shader("exp/07.vs", "exp/07.fs");
-  shader.use();
-  // Shader shader = GLE_SHADER_3D_COLOR;
-  // shader.use();
-
-  gle::Cartesian system(&shader, 50);
+  gle::Cartesian system(50);
 
   gle::Cube cube;
   cube.translate({5.0f, 5.0f, 5.0f});

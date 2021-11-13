@@ -14,18 +14,17 @@ namespace gle
   {
   protected:
     unsigned int vao, vbo;
-    std::vector<float> vertices;
+    // std::vector<float> vertices;
   public:
     Shader* shader;
     unsigned int texture;
-    // unsigned int guide_vao;
     glm::mat4 model;
 
     Shape() {}
     Shape(Shader* shader) : shader(shader) {}
-    Shape(std::vector<float> vertices) : vertices(vertices) {}
+    Shape(std::vector<float> vertices) {}
 
-    void partition()
+    void partition(std::vector<float>& vertices)
     {
       glGenVertexArrays(1, &vao);
       glBindVertexArray(vao);
@@ -119,7 +118,7 @@ namespace gle
   public:
     Line(std::vector<float> vertices)
     {
-      partition();
+      partition(vertices);
     }
 
     void draw()
@@ -136,7 +135,7 @@ namespace gle
   public:
     Triangle(std::vector<float> vertices)
     {
-      partition();
+      partition(vertices);
     }
 
     void draw()
@@ -156,7 +155,7 @@ namespace gle
     Tetragon(std::vector<float> vertices, const char* filepath,
              glm::mat4 model = glm::mat4(1.0f)) : Shape(vertices)
     {
-      partition();
+      partition(vertices);
 
       load_texture(filepath);
 
@@ -165,7 +164,7 @@ namespace gle
 
     Tetragon(const char* filepath, float w = 1.0f, float h = 1.0f)
     {
-      vertices = {
+      std::vector<float> vertices = {
         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
@@ -173,7 +172,7 @@ namespace gle
        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
         0.5f, -0.5f, 0.0f, 1.0f, 0.0f
       };
-      partition();
+      partition(vertices);
 
       load_texture(filepath);
 
@@ -198,7 +197,7 @@ namespace gle
   public:
     Cube(Shader* shader = &GLE_SHADER_3D_COLOR, float w = 1.0f) : Shape(shader)
     {
-      vertices = {
+      std::vector<float> vertices = {
         -0.5f, -0.5f, -0.5f,
          0.5f, -0.5f, -0.5f,
          0.5f,  0.5f, -0.5f,
@@ -241,7 +240,7 @@ namespace gle
         -0.5f,  0.5f,  0.5f,
         -0.5f,  0.5f, -0.5f
       };
-      partition();
+      partition(vertices);
       model = glm::mat4(1.0f);
     }
 
