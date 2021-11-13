@@ -6,7 +6,6 @@
 #include <numeric>
 
 #include <gle/gle.hpp>
-#include <gle/shader.hpp>
 #include <learnopengl/shader_m.h>
 
 namespace gle
@@ -88,14 +87,16 @@ namespace gle
   {
   protected:
     unsigned int vao, vbo;
-    // std::vector<float> vertices;
   public:
-    Shader* shader;
+    Shader shader;
     unsigned int texture;
     glm::mat4 model;
 
-    Shape() {}
-    Shape(Shader* shader) : shader(shader) {}
+    Shape()
+    {
+      shader = Shader3dColor();
+    }
+    Shape(Shader shader) : shader(shader) {}
     Shape(std::vector<float> vertices) {}
 
     void load_texture(const char* filepath)
@@ -236,7 +237,7 @@ namespace gle
   class Cube : public Shape
   {
   public:
-    Cube(Shader* shader = &GLE_SHADER_3D_COLOR, float w = 1.0f) : Shape(shader)
+    Cube(Shader shader = Shader3dColor(), float w = 1.0f) : Shape(shader)
     {
       std::vector<float> vertices = {
         -0.5f, -0.5f, -0.5f,
@@ -287,8 +288,8 @@ namespace gle
 
     void draw()
     {
-      shader->use();
-      shader->setMat4("model", model);
+      shader.use();
+      shader.setMat4("model", model);
 
       glBindVertexArray(vao);
 

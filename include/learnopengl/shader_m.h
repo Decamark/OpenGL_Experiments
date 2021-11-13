@@ -230,4 +230,10 @@ private:
         }
     }
 };
+
+class Shader3dColor : public Shader
+{
+public:
+  Shader3dColor() : Shader("shaders/GLE_SHADER_3D_COLOR.vs", "shaders/GLE_SHADER_3D_COLOR.fs") {}
+};
 #endif

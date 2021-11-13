@@ -2,7 +2,6 @@
 #define _GLE_COORD
 
 #include <gle/shape.hpp>
-#include <gle/shader.hpp>
 #include <learnopengl/shader_m.h>
 
 namespace gle
@@ -10,14 +9,15 @@ namespace gle
   class Cartesian
   {
   private:
-    Shader* shader;
     float d;
     std::vector<float> guide_vs;
     unsigned int vao,       vbo;
     unsigned int guide_vao, guide_vbo;
     glm::mat4 model;
   public:
-    Cartesian(float d = 10, Shader* shader = &GLE_SHADER_3D_COLOR) : d(d), shader(shader)
+    Shader shader;
+
+    Cartesian(float d = 10, Shader shader = Shader3dColor()) : d(d), shader(shader)
     {
       std::vector<float> vs;
       // xy-plane
@@ -112,27 +112,16 @@ namespace gle
 
       // guide
       guide_vs = std::vector(36, 0.0f);
-      glGenVertexArrays(1, &guide_vao);
-      glBindVertexArray(guide_vao);
 
-      glGenBuffers(1, &guide_vbo);
-      glBindBuffer(GL_ARRAY_BUFFER, guide_vbo);
-      glBufferData(GL_ARRAY_BUFFER, guide_vs.size()*sizeof(float), &guide_vs[0], GL_DYNAMIC_DRAW);
-
-      /* (x,y,z) */
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-      glEnableVertexAttribArray(0);
-      /* (r,g,b) */
-      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
-      glEnableVertexAttribArray(1);
+      std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
 
       model = glm::mat4(1.0f);
     }
 
     void draw()
     {
-      shader->use();
-      shader->setMat4("model", model);
+      shader.use();
+      shader.setMat4("model", model);
       glBindVertexArray(vao);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_LINES, 0, 12*(d+1));
@@ -140,8 +129,8 @@ namespace gle
 
     void draw_guide(glm::vec3 pos)
     {
-      shader->use();
-      shader->setMat4("model", model);
+      shader.use();
+      shader.setMat4("model", model);
 
       guide_vs[0]  = pos.x;
       guide_vs[1]  = pos.y;
@@ -191,12 +180,12 @@ namespace gle
   class CartesianA
   {
   private:
-    Shader* shader;
+    Shader shader;
     gle::Tetragon tetra;
   public:
-    CartesianA(Shader* shader = &GLE_SHADER_3D_COLOR) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
+    CartesianA(Shader shader = Shader3dColor()) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
     {
-      shader->setInt("texture0", tetra.texture);
+      shader.setInt("texture0", tetra.texture);
     }
 
     void draw()
@@ -207,7 +196,7 @@ namespace gle
       {
         for (int y=0; y<10; y++)
         {
-          shader->setMat4("model", tetra.model);
+          shader.setMat4("model", tetra.model);
           tetra.draw();
           tetra.translate({0.0, 1.0, 0.0});
         }
@@ -221,7 +210,7 @@ namespace gle
       {
         for (int z=0; z<10; z++)
         {
-          shader->setMat4("model", tetra.model);
+          shader.setMat4("model", tetra.model);
           tetra.draw();
           tetra.translate({0.0, 1.0, 0.0});
         }
@@ -235,7 +224,7 @@ namespace gle
       {
         for (int y=0; y<10; y++)
         {
-          shader->setMat4("model", tetra.model);
+          shader.setMat4("model", tetra.model);
           tetra.draw();
           tetra.translate({0.0, 1.0, 0.0});
         }

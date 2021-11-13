@@ -14,8 +14,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <gle/shader.hpp>
-
 #include <learnopengl/camera.h>
 
 namespace gle
@@ -73,8 +71,6 @@ namespace gle
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-
-    buildShaders();
 
     return window;
   }
