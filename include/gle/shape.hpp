@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <functional>
+#include <numeric>
 
 #include <gle/gle.hpp>
 #include <gle/shader.hpp>
@@ -10,6 +11,79 @@
 
 namespace gle
 {
+  std::pair<unsigned int,unsigned int>
+  partition(std::vector<float>& vertices)
+  {
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    unsigned int vbo;
+    glGenBuffers(1, &vbo);
+    // bind VBO to GL_ARRAY_BUFFER
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
+
+    // format current VAO with currently bound VBO
+    switch (vertices.size()) {
+    case (3+2)*6: /* Tetragon (x,y,z,s,t) */
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+      glEnableVertexAttribArray(0);
+      glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
+      glEnableVertexAttribArray(1);
+      break;
+
+    case 3*3:   /* Triangle (x,y,z) */
+    case 3*6:   /* Tetragon (x,y,z) */
+    case 3*6*6: /* Cube     (x,y,z) */
+    default:
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+      glEnableVertexAttribArray(0);
+      break;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
+    return {vao,vbo};
+  }
+
+  std::pair<unsigned int, unsigned int>
+  partition(std::vector<float> vertices, int count, ...)
+  {
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    unsigned int vbo;
+    glGenBuffers(1, &vbo);
+    // bind VBO to GL_ARRAY_BUFFER
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
+
+    std::vector<int> sizes;
+    va_list vl;
+    va_start(vl, count);
+    for (int i=0; i<count; i++)
+      sizes.push_back( va_arg(vl, int) );
+    va_end(vl);
+    int stride = std::accumulate(sizes.begin(), sizes.end(), 0);
+
+    int offset = 0;
+    for (int i=0; i<count; i++) {
+      glVertexAttribPointer(i, sizes[i], GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)(offset*sizeof(float)));
+      glEnableVertexAttribArray(i);
+      offset += sizes[i];
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
+    return {vao,vbo};
+  }
+
   class Shape
   {
   protected:
@@ -23,75 +97,6 @@ namespace gle
     Shape() {}
     Shape(Shader* shader) : shader(shader) {}
     Shape(std::vector<float> vertices) {}
-
-    static std::pair<unsigned int,unsigned int>
-    partition(std::vector<float>& vertices)
-    {
-      unsigned int vao;
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-
-      unsigned int vbo;
-      glGenBuffers(1, &vbo);
-      // bind VBO to GL_ARRAY_BUFFER
-      glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
-
-      // format current VAO with currently bound VBO
-      switch (vertices.size()) {
-      case (3+2)*6: /* Tetragon (x,y,z,s,t) */
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
-        glEnableVertexAttribArray(1);
-        break;
-
-      case 3*3:   /* Triangle (x,y,z) */
-      case 3*6:   /* Tetragon (x,y,z) */
-      case 3*6*6: /* Cube     (x,y,z) */
-      default:
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(0);
-        break;
-      }
-
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-      glBindVertexArray(0);
-
-      return {vao,vbo};
-    }
-
-    static std::pair<unsigned int, unsigned int>
-    partition(std::vector<float> vertices, int count, ...)
-    {
-      unsigned int vao;
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-
-      unsigned int vbo;
-      glGenBuffers(1, &vbo);
-      // bind VBO to GL_ARRAY_BUFFER
-      glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
-
-      va_list sizes;
-      va_start(sizes, count);
-      int offset = 0;
-      for (int i=0; i<count; i++) {
-        int size = va_arg(sizes, int);
-        int stride = offset + size;
-        glVertexAttribPointer(i, size, GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)(offset*sizeof(float)));
-        glEnableVertexAttribArray(i);
-        offset += size;
-      }
-
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-      glBindVertexArray(0);
-
-      return {vao,vbo};
-    }
 
     void load_texture(const char* filepath)
     {

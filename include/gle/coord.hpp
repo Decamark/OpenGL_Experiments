@@ -108,19 +108,7 @@ namespace gle
         vs.push_back(0.4f);
       }
 
-      glGenVertexArrays(1, &vao);
-      glBindVertexArray(vao);
-
-      glGenBuffers(1, &vbo);
-      glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      glBufferData(GL_ARRAY_BUFFER, vs.size()*sizeof(float), &vs[0], GL_STATIC_DRAW);
-
-      /* (x,y,z) */
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-      glEnableVertexAttribArray(0);
-      /* (r,g,b) */
-      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
-      glEnableVertexAttribArray(1);
+      std::tie(vao,vbo) = partition(vs, 2, 3, 3);
 
       // guide
       guide_vs = std::vector(36, 0.0f);
