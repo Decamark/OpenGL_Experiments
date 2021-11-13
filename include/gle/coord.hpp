@@ -137,6 +137,7 @@ namespace gle
 
     void draw()
     {
+      shader->use();
       shader->setMat4("model", model);
       glBindVertexArray(vao);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -145,6 +146,7 @@ namespace gle
 
     void draw_guide(glm::vec3 pos)
     {
+      shader->use();
       shader->setMat4("model", model);
 
       guide_vs[0]  = pos.x;

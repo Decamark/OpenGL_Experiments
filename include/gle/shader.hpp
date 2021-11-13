@@ -4,7 +4,8 @@
 #include <iostream>
 #include <learnopengl/shader_m.h>
 
-Shader GLE_SHADER_3D_COLOR = Shader();
+Shader GLE_SHADER_3D_COLOR;
+Shader GLE_SHADER_3D_TEXTURE;
 
 void buildShaders()
 {

@@ -16,11 +16,13 @@ namespace gle
     unsigned int vao, vbo;
     std::vector<float> vertices;
   public:
+    Shader* shader;
     unsigned int texture;
     // unsigned int guide_vao;
     glm::mat4 model;
 
     Shape() {}
+    Shape(Shader* shader) : shader(shader) {}
     Shape(std::vector<float> vertices) : vertices(vertices) {}
 
     void partition()
@@ -193,10 +195,8 @@ namespace gle
 
   class Cube : public Shape
   {
-  private:
-    Shader* shader;
   public:
-    Cube(Shader* shader, float w = 1.0f) : shader(shader)
+    Cube(Shader* shader = &GLE_SHADER_3D_COLOR, float w = 1.0f) : Shape(shader)
     {
       vertices = {
         -0.5f, -0.5f, -0.5f,
@@ -247,6 +247,7 @@ namespace gle
 
     void draw()
     {
+      shader->use();
       shader->setMat4("model", model);
 
       glBindVertexArray(vao);
