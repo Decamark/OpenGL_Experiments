@@ -1,40 +1,43 @@
-#ifndef _GLE_SYSTEM
-#define _GLE_SYSTEM
+#ifndef _GLE_GRID
+#define _GLE_GRID
 
 #include <gle/shape.hpp>
 #include <learnopengl/shader_m.h>
 
 namespace gle
 {
-  class Cartesian
+  class Grid
   {
   private:
-    float d;
+    float l, m, n;
     unsigned int vao,       vbo;
     unsigned int guide_vao, guide_vbo;
     glm::mat4 model = glm::mat4(1.0f);
   public:
     Shader shader;
 
-    Cartesian(float d = 10, Shader shader = Shader3dColor()) : d(d), shader(shader)
+    Grid(float d, Shader shader = Shader3dColor()) : Grid(d, d, d, shader)
+    {}
+
+    Grid(float l, float m, float n, Shader shader = Shader3dColor()) : l(l), m(m), n(n), shader(shader)
     {
       std::vector<float> vs;
       // xy-plane
-      for (float y=0.0f; y<=d; y++) {
+      for (float y=0.0f; y<=m; y++) {
         vs.push_back(0.0f);
         vs.push_back(y);
         vs.push_back(0.0f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
-        vs.push_back(d);
+        vs.push_back(l);
         vs.push_back(y);
         vs.push_back(0.0f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
       }
-      for (float x=0.0f; x<=d; x++) {
+      for (float x=0.0f; x<=l; x++) {
         vs.push_back(x);
         vs.push_back(0.0f);
         vs.push_back(0.0f);
@@ -42,14 +45,14 @@ namespace gle
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(x);
-        vs.push_back(d);
+        vs.push_back(m);
         vs.push_back(0.0f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
       }
       // yz-plane
-      for (float y=0.0f; y<=d; y++) {
+      for (float y=0.0f; y<=m; y++) {
         vs.push_back(0.0f);
         vs.push_back(y);
         vs.push_back(0.0f);
@@ -58,12 +61,12 @@ namespace gle
         vs.push_back(0.4f);
         vs.push_back(0.0f);
         vs.push_back(y);
-        vs.push_back(d);
+        vs.push_back(n);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
       }
-      for (float z=0.0f; z<=d; z++) {
+      for (float z=0.0f; z<=n; z++) {
         vs.push_back(0.0f);
         vs.push_back(0.0f);
         vs.push_back(z);
@@ -71,28 +74,28 @@ namespace gle
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.0f);
-        vs.push_back(d);
+        vs.push_back(m);
         vs.push_back(z);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
       }
       // zx-plane
-      for (float z=0.0f; z<=d; z++) {
+      for (float z=0.0f; z<=n; z++) {
         vs.push_back(0.0f);
         vs.push_back(0.0f);
         vs.push_back(z);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
-        vs.push_back(d);
+        vs.push_back(l);
         vs.push_back(0.0f);
         vs.push_back(z);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
       }
-      for (float x=0.0f; x<=d; x++) {
+      for (float x=0.0f; x<=l; x++) {
         vs.push_back(x);
         vs.push_back(0.0f);
         vs.push_back(0.0f);
@@ -101,7 +104,7 @@ namespace gle
         vs.push_back(0.4f);
         vs.push_back(x);
         vs.push_back(0.0f);
-        vs.push_back(d);
+        vs.push_back(n);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
         vs.push_back(0.4f);
@@ -118,8 +121,8 @@ namespace gle
       shader.use();
       shader.setMat4("model", model);
       glBindVertexArray(vao);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      glDrawArrays(GL_LINES, 0, 12*(d+1));
+      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glDrawArrays(GL_LINES, 0, 4*(l+m+n)+12);
     }
 
     void draw_guide(glm::vec3 pos)
@@ -175,13 +178,13 @@ namespace gle
     }
   };
 
-  class CartesianA
+  class GridA
   {
   private:
     Shader shader;
     gle::Tetragon tetra;
   public:
-    CartesianA(Shader shader = Shader3dColor()) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
+    GridA(Shader shader = Shader3dColor()) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
     {
       shader.setInt("texture0", tetra.texture);
     }

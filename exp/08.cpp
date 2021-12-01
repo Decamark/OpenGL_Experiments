@@ -7,12 +7,12 @@
 #include <gle/gle.hpp>
 #include <gle/export.hpp>
 #include <gle/shape.hpp>
-#include <gle/coord.hpp>
+#include <gle/grid.hpp>
 #include <gle/time.hpp>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
-auto* window = gle::setup(WIDTH, HEIGHT, "Practice");
+auto* window = gle::setup(800, 600, "Practice");
 Camera camera(window, glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -45.0f);
 
 int main()
@@ -27,12 +27,16 @@ int main()
   // -----------------------------
   glEnable(GL_DEPTH_TEST);
 
-  Shader shader("exp/08.vs", "exp/08.fs");
-  shader.use();
+  glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-  gle::Cartesian coord(&shader, 50);
+  gle::Grid grid(100.0f);
+  grid.shader.use();
+  grid.shader.setMat4("projection", projection);
 
-  gle::Cube cube(&shader);
+  gle::Cube cube;
+  cube.shader.use();
+  cube.shader.setMat4("projection", projection);
+  cube.setPos(100.0f, 100.0f, 100.0f);
 
   gle::Clock clock;
   while (!glfwWindowShouldClose(window))
@@ -43,22 +47,22 @@ int main()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), WIDTH / HEIGHT, 0.1f, 100.0f);
-    shader.setMat4("view", camera.GetViewMatrix());
-    shader.setMat4("projection", projection);
-
+    cube.shader.use();
     std::function<void(double)> motion = [&cube](double t) {
-      float h = 10.0f-9.8/2*t*t;
+      float h = 100.0f-9.8/2*t*t;
       if (h >= 0)
         cube.setPos(10.0f, h, 10.0f);
       else
         cube.setPos(10.0f, 0.0f, 10.0f);
     };
     cube.move(motion, clock.t);
+    cube.shader.setMat4("view", camera.GetViewMatrix());
     cube.draw();
 
-    coord.draw();
-    coord.draw_guide({cube.model[3][0], cube.model[3][1], cube.model[3][2]});
+    grid.shader.use();
+    grid.shader.setMat4("view", camera.GetViewMatrix());
+    grid.draw();
+    grid.draw_guide({cube.model[3][0], cube.model[3][1], cube.model[3][2]});
 
     glfwSwapBuffers(window);
     glfwPollEvents();

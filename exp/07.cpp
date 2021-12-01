@@ -7,7 +7,7 @@
 #include <gle/gle.hpp>
 #include <gle/export.hpp>
 #include <gle/shape.hpp>
-#include <gle/system.hpp>
+#include <gle/grid.hpp>
 #include <gle/time.hpp>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
@@ -19,9 +19,9 @@ int main()
 {
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-  gle::Cartesian system(50);
-  system.shader.use();
-  system.shader.setMat4("projection", projection);
+  gle::Grid grid(50);
+  grid.shader.use();
+  grid.shader.setMat4("projection", projection);
 
   gle::Cube cube;
   cube.translate({5.0f, 5.0f, 5.0f});
@@ -45,9 +45,9 @@ int main()
     cube.move(motion, clock.t);
     cube.draw();
 
-    system.shader.setMat4("view", camera.GetViewMatrix());
-    system.draw();
-    system.draw_guide({cube.model[3][0], cube.model[3][1], cube.model[3][2]});
+    grid.shader.setMat4("view", camera.GetViewMatrix());
+    grid.draw();
+    grid.draw_guide({cube.model[3][0], cube.model[3][1], cube.model[3][2]});
 
     glfwSwapBuffers(window);
     glfwPollEvents();

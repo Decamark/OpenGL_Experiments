@@ -92,10 +92,7 @@ namespace gle
     unsigned int texture;
     glm::mat4 model = glm::mat4(1.0f);
 
-    Shape()
-    {
-      shader = Shader3dColor();
-    }
+    Shape() { shader = Shader3dColor(); }
     Shape(Shader shader) : shader(shader) {}
     Shape(std::vector<float> vertices) {}
 
@@ -237,7 +234,7 @@ namespace gle
   class Cube : public Shape
   {
   public:
-    Cube(Shader shader = Shader3dColor(), float w = 1.0f) : Shape(shader)
+    Cube(float w = 1.0f, Shader shader = Shader3dColor()) : Shape(shader)
     {
       std::vector<float> vertices = {
         -0.5f, -0.5f, -0.5f,
@@ -292,7 +289,7 @@ namespace gle
 
       glBindVertexArray(vao);
 
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_TRIANGLES, 0, 36);
 
       glBindVertexArray(0);
