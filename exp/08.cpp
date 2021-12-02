@@ -34,19 +34,22 @@ int main()
 
   gle::Cube cube;
   cube.setP(projection);
-  cube.setPos(100.0f, 100.0f, 100.0f);
+  cube.setPos(10.0f, 10.0f, 10.0f);
 
   gle::Clock clock;
   while (!glfwWindowShouldClose(window))
   {
     camera.processInput(clock.tick());
-    // std::cout << clock.t << std::endl;
+    std::cout << clock.t << std::endl;
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    grid.setV(camera.GetViewMatrix());
+    grid.draw();
+
     std::function<void(double)> motion = [&cube](double t) {
-      float h = 100.0f-9.8/2*t*t;
+      float h = 10.0f-9.8/2*t*t;
       if (h >= 0)
         cube.setPos(10.0f, h, 10.0f);
       else
@@ -56,9 +59,6 @@ int main()
     cube.setV(camera.GetViewMatrix());
     cube.draw();
     cube.draw_guide();
-
-    grid.setV(camera.GetViewMatrix());
-    grid.draw();
 
     glfwSwapBuffers(window);
     glfwPollEvents();

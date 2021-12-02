@@ -113,59 +113,8 @@ namespace gle
       glBindVertexArray(vao);
       // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glDrawArrays(GL_LINES, 0, 4*(l+m+n)+12);
+      glBindVertexArray(0);
     }
-
-    // void draw_guide(glm::vec3 pos)
-    // {
-    //   // shader.use();
-    //   // shader.setMat4("model", model);
-
-    //   std::vector<float> guide_vs(36, 0.0f);
-    //   guide_vs[0]  = pos.x;
-    //   guide_vs[1]  = pos.y;
-    //   guide_vs[2]  = pos.z;
-    //   guide_vs[3]  = 1.0f;
-    //   guide_vs[4]  = 0.0f;
-    //   guide_vs[5]  = 0.0f;
-    //   guide_vs[6]  = 0.0f;
-    //   guide_vs[7]  = pos.y;
-    //   guide_vs[8]  = pos.z;
-    //   guide_vs[9]  = 1.0f;
-    //   guide_vs[10] = 0.0f;
-    //   guide_vs[11] = 0.0f;
-
-    //   guide_vs[12] = pos.x;
-    //   guide_vs[13] = pos.y;
-    //   guide_vs[14] = pos.z;
-    //   guide_vs[15] = 0.0f;
-    //   guide_vs[16] = 1.0f;
-    //   guide_vs[17] = 0.0f;
-    //   guide_vs[18] = pos.x;
-    //   guide_vs[19] = 0.0f;
-    //   guide_vs[20] = pos.z;
-    //   guide_vs[21] = 0.0f;
-    //   guide_vs[22] = 1.0f;
-    //   guide_vs[23] = 0.0f;
-
-    //   guide_vs[24] = pos.x;
-    //   guide_vs[25] = pos.y;
-    //   guide_vs[26] = pos.z;
-    //   guide_vs[27] = 0.0f;
-    //   guide_vs[28] = 0.0f;
-    //   guide_vs[29] = 1.0f;
-    //   guide_vs[30] = pos.x;
-    //   guide_vs[31] = pos.y;
-    //   guide_vs[32] = 0.0f;
-    //   guide_vs[33] = 0.0f;
-    //   guide_vs[34] = 0.0f;
-    //   guide_vs[35] = 1.0f;
-
-    //   glBindBuffer(GL_ARRAY_BUFFER, guide_vbo);
-    //   glBufferSubData(GL_ARRAY_BUFFER, 0, guide_vs.size()*sizeof(float), &guide_vs[0]);
-
-    //   glBindVertexArray(guide_vao);
-    //   glDrawArrays(GL_LINES, 0, 18);
-    // }
   };
 
   class GridA

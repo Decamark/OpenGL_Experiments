@@ -88,23 +88,33 @@ namespace gle
   protected:
     unsigned int       vao,       vbo;
     unsigned int guide_vao, guide_vbo;
-    Shader shader;
+    Shader shader, guide_shader = Shader3dColor();
   public:
     unsigned int texture;
     glm::mat4 model = glm::mat4(1.0f);
 
     Shape()
     {
+      // shape
       shader = Shader3dColor();
-      shader.use();
-      shader.setMat4("model", model);
-    }
-    Shape(Shader shader) : shader(shader)
-    {
       shader.use();
       shader.setMat4("model", model);
 
       // guide
+      guide_shader.use();
+      guide_shader.setMat4("model", model);
+      std::vector<float> guide_vs(36, 0.0f);
+      std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
+    }
+    Shape(Shader shader) : shader(shader)
+    {
+      // shape
+      shader.use();
+      shader.setMat4("model", model);
+
+      // guide
+      guide_shader.use();
+      guide_shader.setMat4("model", model);
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
@@ -137,12 +147,16 @@ namespace gle
     {
       shader.use();
       shader.setMat4("projection", projection);
+      guide_shader.use();
+      guide_shader.setMat4("projection", projection);
     }
 
     void setV(glm::mat4 view)
     {
       shader.use();
       shader.setMat4("view", view);
+      guide_shader.use();
+      guide_shader.setMat4("view", view);
     }
 
     void setPos(float x, float y, float z)
@@ -174,7 +188,7 @@ namespace gle
     virtual void draw() = 0;
     void draw_guide()
     {
-      shader.use();
+      guide_shader.use();
 
       std::vector<float> guide_vs(36, 0.0f);
 
@@ -221,16 +235,16 @@ namespace gle
       glBufferSubData(GL_ARRAY_BUFFER, 0, guide_vs.size()*sizeof(float), &guide_vs[0]);
 
       glBindVertexArray(guide_vao);
-      glDrawArrays(GL_LINES, 0, 18);
+      glDrawArrays(GL_LINES, 0, 6);
       glBindVertexArray(0);
     }
 
-    void debug()
+    void debug(glm::mat4 m)
     {
       for (int i=0; i<4; i++)
       {
         for (int j=0; j<4; j++)
-          std::cout << model[j][i] << ' ';
+          std::cout << m[j][i] << ' ';
         std::cout << std::endl;
       }
     }
@@ -368,8 +382,7 @@ namespace gle
 
     void draw()
     {
-      // shader.use();
-      // shader.setMat4("model", model);
+      shader.use();
 
       glBindVertexArray(vao);
 
