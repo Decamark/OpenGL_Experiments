@@ -30,24 +30,21 @@ int main()
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
   gle::Grid grid(100.0f);
-  grid.shader.use();
-  grid.shader.setMat4("projection", projection);
+  grid.setP(projection);
 
   gle::Cube cube;
-  cube.shader.use();
-  cube.shader.setMat4("projection", projection);
+  cube.setP(projection);
   cube.setPos(100.0f, 100.0f, 100.0f);
 
   gle::Clock clock;
   while (!glfwWindowShouldClose(window))
   {
     camera.processInput(clock.tick());
-    std::cout << clock.t << std::endl;
+    // std::cout << clock.t << std::endl;
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    cube.shader.use();
     std::function<void(double)> motion = [&cube](double t) {
       float h = 100.0f-9.8/2*t*t;
       if (h >= 0)
@@ -56,13 +53,12 @@ int main()
         cube.setPos(10.0f, 0.0f, 10.0f);
     };
     cube.move(motion, clock.t);
-    cube.shader.setMat4("view", camera.GetViewMatrix());
+    cube.setV(camera.GetViewMatrix());
     cube.draw();
+    cube.draw_guide();
 
-    grid.shader.use();
-    grid.shader.setMat4("view", camera.GetViewMatrix());
+    grid.setV(camera.GetViewMatrix());
     grid.draw();
-    grid.draw_guide({cube.model[3][0], cube.model[3][1], cube.model[3][2]});
 
     glfwSwapBuffers(window);
     glfwPollEvents();

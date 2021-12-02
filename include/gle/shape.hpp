@@ -86,14 +86,28 @@ namespace gle
   class Shape
   {
   protected:
-    unsigned int vao, vbo;
-  public:
+    unsigned int       vao,       vbo;
+    unsigned int guide_vao, guide_vbo;
     Shader shader;
+  public:
     unsigned int texture;
     glm::mat4 model = glm::mat4(1.0f);
 
-    Shape() { shader = Shader3dColor(); }
-    Shape(Shader shader) : shader(shader) {}
+    Shape()
+    {
+      shader = Shader3dColor();
+      shader.use();
+      shader.setMat4("model", model);
+    }
+    Shape(Shader shader) : shader(shader)
+    {
+      shader.use();
+      shader.setMat4("model", model);
+
+      // guide
+      std::vector<float> guide_vs(36, 0.0f);
+      std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
+    }
     Shape(std::vector<float> vertices) {}
 
     void load_texture(const char* filepath)
@@ -119,19 +133,37 @@ namespace gle
       stbi_image_free(data);
     }
 
+    void setP(glm::mat4 projection)
+    {
+      shader.use();
+      shader.setMat4("projection", projection);
+    }
+
+    void setV(glm::mat4 view)
+    {
+      shader.use();
+      shader.setMat4("view", view);
+    }
+
     void setPos(float x, float y, float z)
     {
       model = glm::translate(glm::mat4(1.0), {x,y,z});
+      shader.use();
+      shader.setMat4("model", model);
     }
 
     void translate(glm::vec3 move)
     {
       model = glm::translate(model, move);
+      shader.use();
+      shader.setMat4("model", model);
     }
 
     void rotate(float angle, glm::vec3 axis)
     {
       model = glm::rotate(model, glm::radians(angle), axis);
+      shader.use();
+      shader.setMat4("model", model);
     }
 
     void move(std::function<void(double)> motion, double t)
@@ -140,6 +172,58 @@ namespace gle
     }
 
     virtual void draw() = 0;
+    void draw_guide()
+    {
+      shader.use();
+
+      std::vector<float> guide_vs(36, 0.0f);
+
+      guide_vs[0]  = model[3][0];
+      guide_vs[1]  = model[3][1];
+      guide_vs[2]  = model[3][2];
+      guide_vs[3]  = 1.0f;
+      guide_vs[4]  = 0.0f;
+      guide_vs[5]  = 0.0f;
+      guide_vs[6]  = 0.0f;
+      guide_vs[7]  = model[3][1];
+      guide_vs[8]  = model[3][2];
+      guide_vs[9]  = 1.0f;
+      guide_vs[10] = 0.0f;
+      guide_vs[11] = 0.0f;
+
+      guide_vs[12] = model[3][0];
+      guide_vs[13] = model[3][1];
+      guide_vs[14] = model[3][2];
+      guide_vs[15] = 0.0f;
+      guide_vs[16] = 1.0f;
+      guide_vs[17] = 0.0f;
+      guide_vs[18] = model[3][0];
+      guide_vs[19] = 0.0f;
+      guide_vs[20] = model[3][2];
+      guide_vs[21] = 0.0f;
+      guide_vs[22] = 1.0f;
+      guide_vs[23] = 0.0f;
+
+      guide_vs[24] = model[3][0];
+      guide_vs[25] = model[3][1];
+      guide_vs[26] = model[3][2];
+      guide_vs[27] = 0.0f;
+      guide_vs[28] = 0.0f;
+      guide_vs[29] = 1.0f;
+      guide_vs[30] = model[3][0];
+      guide_vs[31] = model[3][1];
+      guide_vs[32] = 0.0f;
+      guide_vs[33] = 0.0f;
+      guide_vs[34] = 0.0f;
+      guide_vs[35] = 1.0f;
+
+      glBindBuffer(GL_ARRAY_BUFFER, guide_vbo);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, guide_vs.size()*sizeof(float), &guide_vs[0]);
+
+      glBindVertexArray(guide_vao);
+      glDrawArrays(GL_LINES, 0, 18);
+      glBindVertexArray(0);
+    }
 
     void debug()
     {
@@ -284,8 +368,8 @@ namespace gle
 
     void draw()
     {
-      shader.use();
-      shader.setMat4("model", model);
+      // shader.use();
+      // shader.setMat4("model", model);
 
       glBindVertexArray(vao);
 
