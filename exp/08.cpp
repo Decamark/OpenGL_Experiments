@@ -32,9 +32,8 @@ int main()
   gle::Grid grid(100.0f);
   grid.setP(projection);
 
-  gle::Cube cube;
+  gle::Cube cube(10.0f, 100.0f, 10.0f);
   cube.setP(projection);
-  cube.setPos(10.0f, 10.0f, 10.0f);
 
   gle::Clock clock;
   while (!glfwWindowShouldClose(window))
@@ -49,11 +48,11 @@ int main()
     grid.draw();
 
     std::function<void(double)> motion = [&cube](double t) {
-      float h = 10.0f-9.8/2*t*t;
+      float h = cube.y0-9.8/2*t*t;
       if (h >= 0)
-        cube.setPos(10.0f, h, 10.0f);
+        cube.setPos(cube.x0,    h, cube.z0);
       else
-        cube.setPos(10.0f, 0.0f, 10.0f);
+        cube.setPos(cube.x0, 0.0f, cube.z0);
     };
     cube.move(motion, clock.t);
     cube.setV(camera.GetViewMatrix());

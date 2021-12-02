@@ -333,8 +333,10 @@ namespace gle
   class Cube : public Shape
   {
   public:
-    Cube(float w = 1.0f, Shader shader = Shader3dColor()) : Shape(shader)
+    float x0, y0, z0;
+    Cube(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f, Shader shader = Shader3dColor()) : x0(x), y0(y), z0(z), Shape(shader)
     {
+      setPos(x, y, z);
       std::vector<float> vertices = {
         -0.5f, -0.5f, -0.5f,
          0.5f, -0.5f, -0.5f,
