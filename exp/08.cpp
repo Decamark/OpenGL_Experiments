@@ -59,6 +59,7 @@ int main()
     cube.setV(camera.GetViewMatrix());
     cube.draw();
     cube.draw_guide();
+    gle::debug(camera.GetViewMatrix());
 
     glfwSwapBuffers(window);
     glfwPollEvents();

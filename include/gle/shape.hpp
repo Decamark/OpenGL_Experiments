@@ -83,6 +83,17 @@ namespace gle
     return {vao,vbo};
   }
 
+  void debug(glm::mat4 m)
+  {
+    std::cout.setf(std::ios::right, std::ios::adjustfield);
+    for (int i=0; i<4; i++)
+    {
+      for (int j=0; j<4; j++)
+        std::cout << std::setw(10) << std::fixed << std::setprecision(5) << m[j][i] << ' ';
+      std::cout << std::endl;
+    }
+  }
+
   class Shape
   {
   protected:
@@ -237,16 +248,6 @@ namespace gle
       glBindVertexArray(guide_vao);
       glDrawArrays(GL_LINES, 0, 6);
       glBindVertexArray(0);
-    }
-
-    void debug(glm::mat4 m)
-    {
-      for (int i=0; i<4; i++)
-      {
-        for (int j=0; j<4; j++)
-          std::cout << m[j][i] << ' ';
-        std::cout << std::endl;
-      }
     }
   };
 
