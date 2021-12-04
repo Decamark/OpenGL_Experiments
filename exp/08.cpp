@@ -47,6 +47,7 @@ int main()
     grid.setV(camera.GetViewMatrix());
     grid.draw();
 
+    cube.setV(camera.GetViewMatrix());
     std::function<void(double)> motion = [&cube](double t) {
       float h = cube.y0-9.8/2*t*t;
       if (h >= 0)
@@ -55,10 +56,8 @@ int main()
         cube.setPos(cube.x0, 0.0f, cube.z0);
     };
     cube.move(motion, clock.t);
-    cube.setV(camera.GetViewMatrix());
     cube.draw();
     cube.draw_guide();
-    gle::debug(camera.GetViewMatrix());
 
     glfwSwapBuffers(window);
     glfwPollEvents();
