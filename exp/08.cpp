@@ -35,6 +35,9 @@ int main()
   gle::Cube cube(10.0f, 100.0f, 10.0f);
   cube.setP(projection);
 
+  gle::Cube cube2(10.0f, 100.0f, 10.0f);
+  cube2.setP(projection);
+
   gle::Clock clock;
   while (!glfwWindowShouldClose(window))
   {
@@ -58,6 +61,10 @@ int main()
     cube.move(motion, clock.t);
     cube.draw();
     cube.draw_guide();
+
+    cube2.setV(camera.GetViewMatrix());
+    cube2.draw();
+    cube2.draw_guide();
 
     glfwSwapBuffers(window);
     glfwPollEvents();
