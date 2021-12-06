@@ -214,14 +214,7 @@ namespace gle
     void rotateAround(float angle, glm::vec3 axis, glm::vec3 origin)
     {
       translate(-origin);
-      glm::mat4 rot = {
-        glm::cos(glm::radians(angle)),  0, -glm::sin(glm::radians(angle)), 0,
-                                     0, 1,                              0, 0,
-         glm::sin(glm::radians(angle)), 0,  glm::cos(glm::radians(angle)), 0,
-                                     0, 0,                              0, 1
-      };
-      model *= rot;
-      setM();
+      rotate(angle, axis);
       translate(origin);
     }
 

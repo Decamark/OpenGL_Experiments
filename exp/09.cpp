@@ -59,6 +59,9 @@ int main()
   gle::Tetragon tetra6(10.0f, 10.0f, 30.0f, 30.0f, 15.0f);
   tetra6.setP(projection);
 
+  // gle::Tetragon tetra7(10.0f, 10.0f, 45.0f, 30.0f, 15.0f);
+  // tetra7.setP(projection);
+
   gle::Clock clock;
   while (!glfwWindowShouldClose(window))
   {
@@ -71,13 +74,13 @@ int main()
     grid.setV(camera.GetViewMatrix());
     grid.draw();
 
-    // Rotate according to the euler angle
+    // Rotate on the spot
     tetra1.setV(camera.GetViewMatrix());
     tetra1.rotate(glm::radians(10.0f), {0.0f, 1.0f, 0.0f});
     tetra1.draw();
     tetra1.draw_guide();
 
-    // Rotate around the origin
+    // Buggy rotation
     tetra2.setV(camera.GetViewMatrix());
     // This is the inverse of how GLM stores transformations
     // glm::mat4 rot = {
@@ -98,14 +101,14 @@ int main()
     tetra2.draw();
     tetra2.draw_guide();
 
-    // Rotate according to the euler angle (similar to 1)
+    // Rotate on the spot
     tetra3.setV(camera.GetViewMatrix());
     tetra3.model = tetra3.model * rot;
     tetra3.setM();
     tetra3.draw();
     tetra3.draw_guide();
 
-    // Rotate around the given axis
+    // Rotate around the given point (y-axis)
     tetra4.setV(camera.GetViewMatrix());
     tetra4.translate({-5.0f, 0.0f, -5.0f});
     tetra4.model *= rot;
@@ -114,13 +117,16 @@ int main()
     tetra4.draw();
     tetra4.draw_guide();
 
+    // Rotate around the given point (freely)
     tetra5.setV(camera.GetViewMatrix());
-    tetra5.rotateAround(360.0f*dt, {0.0f, 1.0f, 0.0f}, {15.0f, 30.0f, 0.0f});
+    tetra5.translate({10.0f, 10.0f, 10.0f});
+    tetra5.rotate(90.0f*dt, {1.0f, 1.0f, 0.0f});
+    tetra5.translate({-10.0f, -10.0f, -10.0f});
     tetra5.draw();
     tetra5.draw_guide();
 
     tetra6.setV(camera.GetViewMatrix());
-    tetra6.rotateAround(90.0f*dt, {1.0f, 1.0f, 0.0f}, {30.0f, 30.0f, 60.0f});
+    tetra6.rotateAround(90.0f*dt, {0.0f, 1.0f, 1.0f}, {5.0f, 5.0f, 5.0f});
     tetra6.draw();
     tetra6.draw_guide();
 
