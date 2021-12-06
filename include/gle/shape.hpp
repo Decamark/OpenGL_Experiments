@@ -83,13 +83,27 @@ namespace gle
     return {vao,vbo};
   }
 
-  void debug(glm::mat4 m)
+  template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+  void debug(glm::vec<L,T,Q> v)
   {
     std::cout.setf(std::ios::right, std::ios::adjustfield);
-    for (int i=0; i<4; i++)
+    for (int i=0; i<v.length(); i++)
     {
-      for (int j=0; j<4; j++)
-        std::cout << std::setw(10) << std::fixed << std::setprecision(5) << m[j][i] << ' ';
+      std::cout << std::setw(10) << std::fixed << std::setprecision(5)
+                << v[i] << ' ';
+      std::cout << std::endl;
+    }
+  }
+
+  template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q = glm::defaultp>
+  void debug(glm::mat<C,R,T,Q> m)
+  {
+    std::cout.setf(std::ios::right, std::ios::adjustfield);
+    for (int i=0; i<m[0].length(); i++)
+    {
+      for (int j=0; j<m.length(); j++)
+        std::cout << std::setw(10) << std::fixed << std::setprecision(5)
+                  << m[j][i] << ' ';
       std::cout << std::endl;
     }
   }
@@ -170,6 +184,12 @@ namespace gle
       guide_shader.setMat4("view", view);
     }
 
+    void setM()
+    {
+      shader.use();
+      shader.setMat4("model", model);
+    }
+
     void setPos(float x, float y, float z)
     {
       model = glm::translate(glm::mat4(1.0), {x,y,z});
@@ -189,6 +209,20 @@ namespace gle
       model = glm::rotate(model, glm::radians(angle), axis);
       shader.use();
       shader.setMat4("model", model);
+    }
+
+    void rotateAround(float angle, glm::vec3 axis, glm::vec3 origin)
+    {
+      translate(-origin);
+      glm::mat4 rot = {
+        glm::cos(glm::radians(angle)),  0, -glm::sin(glm::radians(angle)), 0,
+                                     0, 1,                              0, 0,
+         glm::sin(glm::radians(angle)), 0,  glm::cos(glm::radians(angle)), 0,
+                                     0, 0,                              0, 1
+      };
+      model *= rot;
+      setM();
+      translate(origin);
     }
 
     void move(std::function<void(double)> motion, double t)
@@ -290,14 +324,28 @@ namespace gle
   public:
     Tetragon(std::vector<float> vertices) : Shape(vertices) {}
 
-    Tetragon(std::vector<float> vertices, const char* filepath,
-             glm::mat4 model = glm::mat4(1.0f)) : Shape(vertices)
+    // Tetragon(std::vector<float> vertices, const char* filepath,
+    //          glm::mat4 model = glm::mat4(1.0f)) : Shape(vertices)
+    // {
+    //   std::tie(vao,vbo) = partition(vertices);
+
+    //   load_texture(filepath);
+
+    //   this->model = model;
+    // }
+
+    Tetragon(float w = 1.0f, float h = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f, Shader shader = Shader3dColor()) : Shape(shader)
     {
-      std::tie(vao,vbo) = partition(vertices);
-
-      load_texture(filepath);
-
-      this->model = model;
+      std::vector<float> vertices = {
+        w/2,  h/2, 0.0f, 1.0f, 0.0f, 0.0f,
+        w/2, -h/2, 0.0f, 0.0f, 1.0f, 0.0f,
+       -w/2,  h/2, 0.0f, 0.0f, 0.0f, 1.0f,
+       -w/2,  h/2, 0.0f, 0.0f, 0.0f, 1.0f,
+       -w/2, -h/2, 0.0f, 0.0f, 1.0f, 0.0f,
+        w/2, -h/2, 0.0f, 1.0f, 0.0f, 0.0f
+      };
+      std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
+      setPos(x, y, z);
     }
 
     Tetragon(const char* filepath, float w = 1.0f, float h = 1.0f)
@@ -319,14 +367,17 @@ namespace gle
 
     void draw()
     {
+      shader.use();
+
       glBindVertexArray(vao);
-      if (texture) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glActiveTexture(GL_TEXTURE0+texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-      }
+      // if (texture) {
+      //   glEnable(GL_BLEND);
+      //   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      //   glActiveTexture(GL_TEXTURE0+texture);
+      //   glBindTexture(GL_TEXTURE_2D, texture);
+      // }
       glDrawArrays(GL_TRIANGLES, 0, 6);
+      glBindVertexArray(0);
     }
   };
 
