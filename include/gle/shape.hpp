@@ -468,8 +468,9 @@ namespace gle
       for (int i = 0; i <= stackCount; ++i)
       {
         stackAngle = PI / 2 - i * stackStep;       // starting from pi/2 to -pi/2
-        float xy = r * glm::cos(stackAngle);       // r * cos(u)
-        float z  = r * glm::sin(stackAngle);       // r * sin(u)
+        float xz = r * glm::cos(stackAngle);       // r * cos(u)
+        // float xy = r * glm::cos(stackAngle);       // r * cos(u)
+        float y  = r * glm::sin(stackAngle);       // r * sin(u)
 
         // add (sectorCount+1) vertices per stack
         // the first and last vertices have same position and normal, but different tex coords
@@ -478,9 +479,9 @@ namespace gle
           sectorAngle = j * sectorStep;           // starting from 0 to 2pi
 
           Vertex vertex;
-          vertex.x = xy * glm::cos(sectorAngle);      // x = r * cos(u) * cos(v)
-          vertex.y = xy * glm::sin(sectorAngle);      // y = r * cos(u) * sin(v)
-          vertex.z = z;                           // z = r * sin(u)
+          vertex.x = xz * glm::sin(sectorAngle);      // x = r * cos(u) * sin(v)
+          vertex.z = xz * glm::cos(sectorAngle);      // z = r * cos(u) * cos(v)
+          vertex.y = y;                           // y = r * sin(u)
           vertex.s = (float)j/sectorCount;        // s
           vertex.t = (float)i/stackCount;         // t
           tmpVertices.push_back(vertex);
