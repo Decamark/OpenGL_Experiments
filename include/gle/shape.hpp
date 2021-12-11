@@ -137,20 +137,22 @@ namespace gle
     unsigned int texture;
     glm::mat4 model = glm::mat4(1.0f);
 
-    // Shape()
-    // {
-    //   // shape
-    //   shader = Shader3dColor();
-    //   shader.use();
-    //   shader.setMat4("model", model);
+    // Children with the constructor which doesn't hold initializer lists will call this
+    Shape()
+    {
+      // shape
+      shader = Shader3dColor();
+      shader.use();
+      shader.setMat4("model", model);
 
-    //   // guide
-    //   guide_shader.use();
-    //   guide_shader.setMat4("model", model);
-    //   std::vector<float> guide_vs(36, 0.0f);
-    //   std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
-    // }
-    Shape(Shader shader = Shader3dColor()) : shader(shader)
+      // guide
+      guide_shader.use();
+      guide_shader.setMat4("model", model);
+      std::vector<float> guide_vs(36, 0.0f);
+      std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
+    }
+
+    Shape(Shader shader) : shader(shader)
     {
       // shape
       shader.use();
@@ -162,6 +164,7 @@ namespace gle
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
+
     // FIXME: Remove me later
     Shape(std::vector<float> vertices) {}
 

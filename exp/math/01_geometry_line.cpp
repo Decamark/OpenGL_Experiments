@@ -1,5 +1,5 @@
 /**
- * (Math) 11: Line
+ * (Math) 01: Draw a line
  */
 
 #include <functional>
@@ -13,7 +13,7 @@
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
-auto* window = gle::setup(1200, 800, "Practice");
+auto* window = gle::setup(1200, 800, "GLab");
 Camera camera(window, glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
 
 int main()
@@ -50,7 +50,7 @@ int main()
 
     l.setV(camera.GetViewMatrix());
     l.draw();
-    l.draw_guide();
+    l.drawGuide();
 
     glfwSwapBuffers(window);
     glfwPollEvents();
