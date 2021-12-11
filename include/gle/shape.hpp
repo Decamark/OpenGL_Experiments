@@ -10,6 +10,12 @@
 
 namespace gle
 {
+  template <typename T>
+  void operator+=(std::vector<T>& v1, std::vector<T>& v2)
+  {
+    v1.insert(v1.end(), v2.begin(), v2.end());
+  }
+
   std::pair<unsigned int,unsigned int>
   partition(std::vector<float>& vertices)
   {
@@ -130,10 +136,22 @@ namespace gle
     unsigned int texture;
     glm::mat4 model = glm::mat4(1.0f);
 
-    Shape()
+    // Shape()
+    // {
+    //   // shape
+    //   shader = Shader3dColor();
+    //   shader.use();
+    //   shader.setMat4("model", model);
+
+    //   // guide
+    //   guide_shader.use();
+    //   guide_shader.setMat4("model", model);
+    //   std::vector<float> guide_vs(36, 0.0f);
+    //   std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
+    // }
+    Shape(Shader shader = Shader3dColor()) : shader(shader)
     {
       // shape
-      shader = Shader3dColor();
       shader.use();
       shader.setMat4("model", model);
 
@@ -143,18 +161,7 @@ namespace gle
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
-    Shape(Shader shader) : shader(shader)
-    {
-      // shape
-      shader.use();
-      shader.setMat4("model", model);
-
-      // guide
-      guide_shader.use();
-      guide_shader.setMat4("model", model);
-      std::vector<float> guide_vs(36, 0.0f);
-      std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
-    }
+    // FIXME: Remove me later
     Shape(std::vector<float> vertices) {}
 
     void load_texture(const char* filepath)
@@ -180,6 +187,7 @@ namespace gle
       stbi_image_free(data);
     }
 
+    // Set "projection" matrix
     void setP(glm::mat4 projection)
     {
       shader.use();
@@ -188,6 +196,7 @@ namespace gle
       guide_shader.setMat4("projection", projection);
     }
 
+    // Set "view" matrix
     void setV(glm::mat4 view)
     {
       shader.use();
@@ -196,6 +205,7 @@ namespace gle
       guide_shader.setMat4("view", view);
     }
 
+    // Set "model" matrix
     void setM()
     {
       shader.use();
@@ -218,6 +228,7 @@ namespace gle
       shader.setMat4("model", model);
     }
 
+    // Rotate at the current position
     void rotate(float angle, glm::vec3 axis)
     {
       model = glm::rotate(model, glm::radians(angle), axis);
@@ -225,12 +236,12 @@ namespace gle
       shader.setMat4("model", model);
     }
 
-    // Rotate around the origin
-    void rotateAround(float angle, glm::vec3 axis, glm::vec3 origin)
+    // Rotate around the center
+    void rotateAround(float angle, glm::vec3 axis, glm::vec3 center)
     {
-      translate(-origin);
+      translate(-center);
       rotate(angle, axis);
-      translate(origin);
+      translate(center);
     }
 
     void move(std::function<void(double)> motion, double t)
@@ -336,7 +347,25 @@ namespace gle
     //   x2, y2, z2, r2, g2, b2 }
     Line(std::vector<float> vertices)
     {
-      std::tie(vao,vbo) = partition(vertices);
+      std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
+      ebo = order(vao, {0, 1});
+    }
+
+    // p1--p2
+    Line(std::vector<float> p1, std::vector<float> /* Color */ c1,
+         std::vector<float> p2, std::vector<float> /* Color */ c2)
+    {
+      std::vector<float> vertices;
+      vertices += p1;
+      vertices += c1;
+      vertices += p2;
+      vertices += c2;
+      // vertices.insert(vertices.end(), p1.begin(), p1.end());
+      // vertices.insert(vertices.end(), c1.begin(), c1.end());
+      // vertices.insert(vertices.end(), p2.begin(), p2.end());
+      // vertices.insert(vertices.end(), c2.begin(), c2.end());
+      std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
+      ebo = order(vao, {0, 1});
     }
   };
 
