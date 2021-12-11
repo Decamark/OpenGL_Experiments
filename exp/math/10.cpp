@@ -1,5 +1,5 @@
 /**
- * 10: Sphere
+ * (Math) 10: Sphere
  */
 
 #include <functional>

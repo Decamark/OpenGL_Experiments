@@ -12,6 +12,13 @@
 # 04:
 # 	g++ -std=c++17 -I/usr/local/ -I./includes/ -L/usr/local -lglfw -framework OpenGL glad.c 04.cpp
 
-all:
+setup:
+	brew install glfw glm
+
+# all:
+# 	g++ -std=c++17 -I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
+# 	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./exp/$(n)_*.cpp)
+
+math:
 	g++ -std=c++17 -I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
-	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./exp/$(n)_*.cpp)
+	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./exp/math/$(no)_*.cpp)
