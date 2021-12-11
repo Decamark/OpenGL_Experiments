@@ -14,4 +14,4 @@
 
 all:
 	g++ -std=c++17 -I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
-	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp ./exp/$(n)$(wildcard _*).cpp
+	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./exp/$(n)_*.cpp)
