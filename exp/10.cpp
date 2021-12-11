@@ -48,8 +48,7 @@ int main()
     grid.draw();
 
     s.setV(camera.GetViewMatrix());
-    s.drawElements();
-    // s.draw();
+    s.draw();
     s.draw_guide();
 
     glfwSwapBuffers(window);

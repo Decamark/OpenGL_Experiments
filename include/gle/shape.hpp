@@ -125,6 +125,7 @@ namespace gle
     unsigned int       vao,       vbo, ebo;
     unsigned int guide_vao, guide_vbo;
     Shader shader, guide_shader = Shader3dColor();
+    GLenum mode = GL_TRIANGLES;;
   public:
     unsigned int texture;
     glm::mat4 model = glm::mat4(1.0f);
@@ -201,6 +202,7 @@ namespace gle
       shader.setMat4("model", model);
     }
 
+    // Set the absolute position in the world
     void setPos(float x, float y, float z)
     {
       model = glm::translate(glm::mat4(1.0), {x,y,z});
@@ -208,6 +210,7 @@ namespace gle
       shader.setMat4("model", model);
     }
 
+    // Move from the current position
     void translate(glm::vec3 move)
     {
       model = glm::translate(model, move);
@@ -222,6 +225,7 @@ namespace gle
       shader.setMat4("model", model);
     }
 
+    // Rotate around the origin
     void rotateAround(float angle, glm::vec3 axis, glm::vec3 origin)
     {
       translate(-origin);
@@ -232,6 +236,42 @@ namespace gle
     void move(std::function<void(double)> motion, double t)
     {
       motion(t);
+    }
+
+    void draw()
+    {
+      drawElements(mode);
+    }
+
+    void drawElements(GLenum mode)
+    {
+      shader.use();
+
+      glBindVertexArray(vao);
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+      // The number of the vertices
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+      int size = 0;
+      glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+      glDrawElements(mode, size, GL_UNSIGNED_INT, 0);
+
+      glBindVertexArray(0);
+    }
+
+    [[deprecated("Use drawElements() instead")]]
+    void drawArrays(GLenum mode, /* The number of the vertices */ int size)
+    {
+      shader.use();
+
+      glBindVertexArray(vao);
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      // glDrawArrays(GL_LINES, 0, size);
+      glDrawArrays(mode, 0, size);
+
+      glBindVertexArray(0);
     }
 
     void draw_guide()
@@ -291,17 +331,12 @@ namespace gle
   class Line : public Shape
   {
   public:
+    // Expects:
+    // { x1, y1, z1, r1, g1, b1,
+    //   x2, y2, z2, r2, g2, b2 }
     Line(std::vector<float> vertices)
     {
       std::tie(vao,vbo) = partition(vertices);
-    }
-
-    void draw()
-    {
-      glBindVertexArray(vao);
-
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      glDrawArrays(GL_LINES, 0, 2);
     }
   };
 
@@ -555,23 +590,10 @@ namespace gle
       std::tie(vao,vbo) = partition(vertices, 1, 3);
       ebo = order(vao, indices);
 
+      // The primitive to use when drawing
+      mode = GL_TRIANGLES;
+
       setPos(x, y, z);
-    }
-
-    void drawElements()
-    {
-      shader.use();
-
-      glBindVertexArray(vao);
-
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-      int size = 0;
-      glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-      glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
-
-      glBindVertexArray(0);
     }
   }; // class Sphere
 } // namespace gle
