@@ -83,6 +83,17 @@ namespace gle
     return {vao,vbo};
   }
 
+  unsigned int order(unsigned int vao, std::vector<unsigned int> indices)
+  {
+    glBindVertexArray(vao);
+    unsigned int ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBindVertexArray(0);
+    return ebo;
+  }
+
   template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
   void debug(glm::vec<L,T,Q> v)
   {
@@ -111,9 +122,8 @@ namespace gle
   class Shape
   {
   protected:
-    unsigned int       vao,       vbo;
+    unsigned int       vao,       vbo, ebo;
     unsigned int guide_vao, guide_vbo;
-    unsigned int                  ebo;
     Shader shader, guide_shader = Shader3dColor();
   public:
     unsigned int texture;
@@ -224,7 +234,6 @@ namespace gle
       motion(t);
     }
 
-    virtual void draw() = 0;
     void draw_guide()
     {
       guide_shader.use();
@@ -441,6 +450,7 @@ namespace gle
     }
   };
 
+  // http://www.songho.ca/opengl/gl_sphere.html
   class Sphere : public Shape
   {
   public:
@@ -543,16 +553,10 @@ namespace gle
         }
       }
       std::tie(vao,vbo) = partition(vertices, 1, 3);
-      glBindVertexArray(vao);
-      glGenBuffers(1, &ebo);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size()*sizeof(int), indices.data(), GL_STATIC_DRAW);
-      glBindVertexArray(0);
+      ebo = order(vao, indices);
 
       setPos(x, y, z);
     }
-
-    void draw() {}
 
     void drawElements()
     {
