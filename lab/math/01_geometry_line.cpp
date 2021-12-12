@@ -13,7 +13,7 @@
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
-auto* window = gle::setup(1200, 800, "GLab");
+auto* window = gle::setup(1200, 800, "glab");
 Camera camera(window, glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
 
 int main()

@@ -289,7 +289,7 @@ namespace gle
       glBindVertexArray(0);
     }
 
-    void draw_guide()
+    void drawGuide()
     {
       guide_shader.use();
 
