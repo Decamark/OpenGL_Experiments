@@ -234,6 +234,13 @@ private:
 class Shader3dColor : public Shader
 {
 public:
-  Shader3dColor() : Shader("shaders/GLE_SHADER_3D_COLOR.vs", "shaders/GLE_SHADER_3D_COLOR.fs") {}
+  Shader3dColor() : Shader("shaders/GLAB_SHADER_3D_COLOR.vs", "shaders/GLAB_SHADER_3D_COLOR.fs") {}
 };
+
+class Shader3dTexture : public Shader
+{
+public:
+  Shader3dTexture() : Shader("shaders/GLAB_SHADER_3D_TEXTURE.vs", "shaders/GLAB_SHADER_3D_TEXTURE.fs") {}
+};
+
 #endif

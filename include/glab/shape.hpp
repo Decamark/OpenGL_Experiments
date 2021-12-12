@@ -101,6 +101,30 @@ namespace glab
     return ebo;
   }
 
+  unsigned int loadTexture(const char* filepath)
+  {
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glActiveTexture(GL_TEXTURE0); // [NOTICE] Using the texture unit "GL_TEXTURE0"
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    int width, height, nr_channels;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load(filepath, &width, &height, &nr_channels, 0);
+    if (data)
+    {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+      glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+      std::cout << "Failed to load texture" << std::endl;
+    stbi_image_free(data);
+    return texture;
+  }
+
   template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
   void debug(glm::vec<L,T,Q> v)
   {
@@ -134,7 +158,7 @@ namespace glab
     Shader shader, guide_shader = Shader3dColor();
     GLenum mode = GL_TRIANGLES;;
   public:
-    unsigned int texture;
+    std::vector<unsigned int> textures;
     glm::mat4 model = glm::mat4(1.0f);
 
     // Children with the constructor which doesn't hold initializer lists will call this
@@ -167,29 +191,6 @@ namespace glab
 
     // FIXME: Remove me later
     Shape(std::vector<float> vertices) {}
-
-    void load_texture(const char* filepath)
-    {
-      unsigned int texture;
-      glGenTextures(1, &texture);
-      glBindTexture(GL_TEXTURE_2D, texture);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      int width, height, nr_channels;
-      stbi_set_flip_vertically_on_load(true);
-      unsigned char* data = stbi_load(filepath, &width, &height, &nr_channels, 0);
-      if (data)
-      {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        // textures.push_back(texture);
-      }
-      else
-        std::cout << "Failed to load texture" << std::endl;
-      stbi_image_free(data);
-    }
 
     // Set "projection" matrix
     void setP(glm::mat4 projection)
@@ -264,13 +265,25 @@ namespace glab
 
       glBindVertexArray(vao);
 
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
       // The number of the vertices
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
       int size = 0;
       glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-      glDrawElements(mode, size, GL_UNSIGNED_INT, 0);
+
+      // [FIXME] This snippet doesn't consider the case where a different number of vertices are used on each face
+      // ex) Archimedian solid
+      if (not textures.empty()) {
+        for (int i=0; i<textures.size(); i++) {
+          glEnable(GL_BLEND);
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+          glBindTexture(GL_TEXTURE_2D, textures[i]);
+          glDrawRangeElements(mode, size/sizeof(float)/textures.size()*i, size/sizeof(float)/textures.size()*(i+1)-1, size/sizeof(float)/textures.size(), GL_UNSIGNED_INT, 0);
+        }
+      }
+      else
+        glDrawElements(mode, size/sizeof(float), GL_UNSIGNED_INT, 0);
 
       glBindVertexArray(0);
     }
@@ -339,68 +352,6 @@ namespace glab
 
       glBindVertexArray(guide_vao);
       glDrawArrays(GL_LINES, 0, 6);
-      glBindVertexArray(0);
-    }
-  };
-
-  class Tetragon : public Shape
-  {
-  public:
-    Tetragon(std::vector<float> vertices) : Shape(vertices) {}
-
-    // Tetragon(std::vector<float> vertices, const char* filepath,
-    //          glm::mat4 model = glm::mat4(1.0f)) : Shape(vertices)
-    // {
-    //   std::tie(vao,vbo) = partition(vertices);
-
-    //   load_texture(filepath);
-
-    //   this->model = model;
-    // }
-
-    Tetragon(float w = 1.0f, float h = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f, Shader shader = Shader3dColor()) : Shape(shader)
-    {
-      std::vector<float> vertices = {
-        w/2,  h/2, 0.0f, 1.0f, 0.0f, 0.0f,
-        w/2, -h/2, 0.0f, 0.0f, 1.0f, 0.0f,
-       -w/2,  h/2, 0.0f, 0.0f, 0.0f, 1.0f,
-       -w/2,  h/2, 0.0f, 0.0f, 0.0f, 1.0f,
-       -w/2, -h/2, 0.0f, 0.0f, 1.0f, 0.0f,
-        w/2, -h/2, 0.0f, 1.0f, 0.0f, 0.0f
-      };
-      std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
-      setPos(x, y, z);
-    }
-
-    Tetragon(const char* filepath, float w = 1.0f, float h = 1.0f)
-    {
-      std::vector<float> vertices = {
-        0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-       -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-       -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-       -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f
-      };
-      std::tie(vao,vbo) = partition(vertices);
-
-      load_texture(filepath);
-
-      this->model = model;
-    }
-
-    void draw()
-    {
-      shader.use();
-
-      glBindVertexArray(vao);
-      // if (texture) {
-      //   glEnable(GL_BLEND);
-      //   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      //   glActiveTexture(GL_TEXTURE0+texture);
-      //   glBindTexture(GL_TEXTURE_2D, texture);
-      // }
-      glDrawArrays(GL_TRIANGLES, 0, 6);
       glBindVertexArray(0);
     }
   };
