@@ -356,72 +356,6 @@ namespace glab
     }
   };
 
-  class Cube : public Shape
-  {
-  public:
-    float x0, y0, z0;
-    Cube(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f, Shader shader = Shader3dColor()) : x0(x), y0(y), z0(z), Shape(shader)
-    {
-      setPos(x, y, z);
-      std::vector<float> vertices = {
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f
-      };
-      std::tie(vao,vbo) = partition(vertices, 1, 3);
-    }
-
-    void draw()
-    {
-      shader.use();
-
-      glBindVertexArray(vao);
-
-      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
-
-      glBindVertexArray(0);
-    }
-  };
-
   // http://www.songho.ca/opengl/gl_sphere.html
   class Sphere : public Shape
   {
@@ -536,5 +470,6 @@ namespace glab
 } // namespace glab
 
 #include <glab/shape/polygon.hpp>
+#include <glab/shape/polyhedron.hpp>
 
 #endif

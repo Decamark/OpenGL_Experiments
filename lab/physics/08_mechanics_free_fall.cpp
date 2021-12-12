@@ -1,18 +1,17 @@
 /**
- * 08: Simulation of free fall
+ * (Physics) 08: Simulation of free fall
  */
 
 #include <functional>
 
-#include <gle/gle.hpp>
-#include <gle/export.hpp>
-#include <gle/shape.hpp>
-#include <gle/grid.hpp>
-#include <gle/time.hpp>
+#include <glab/glab.hpp>
+#include <glab/shape.hpp>
+#include <glab/grid.hpp>
+#include <glab/time.hpp>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
-auto* window = gle::setup(800, 600, "Practice");
+auto* window = glab::setup(1200, 800, "glab");
 Camera camera(window, glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -45.0f);
 
 int main()
@@ -27,18 +26,18 @@ int main()
   // -----------------------------
   glEnable(GL_DEPTH_TEST);
 
-  glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+  glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
 
-  gle::Grid grid(100.0f);
+  glab::Grid grid(100.0f);
   grid.setP(projection);
 
-  gle::Cube cube(10.0f, 100.0f, 10.0f);
+  glab::Cube cube(10.0f, 100.0f, 10.0f, 5.0f);
   cube.setP(projection);
 
-  gle::Cube cube2(10.0f, 100.0f, 10.0f);
+  glab::Cube cube2(10.0f, 100.0f, 10.0f, 5.0f);
   cube2.setP(projection);
 
-  gle::Clock clock;
+  glab::Clock clock;
   while (!glfwWindowShouldClose(window))
   {
     camera.processInput(clock.tick());
@@ -60,11 +59,11 @@ int main()
     };
     cube.move(motion, clock.t);
     cube.draw();
-    cube.draw_guide();
+    cube.drawGuide();
 
     cube2.setV(camera.GetViewMatrix());
     cube2.draw();
-    cube2.draw_guide();
+    cube2.drawGuide();
 
     glfwSwapBuffers(window);
     glfwPollEvents();
