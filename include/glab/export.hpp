@@ -1,9 +1,9 @@
-#ifndef _GLE_EXPORT
-#define _GLE_EXPORT
+#ifndef _GLAB_EXPORT
+#define _GLAB_EXPORT
 
-#include <gle/gle.hpp>
+#include <glab/glab.hpp>
 
-namespace gle
+namespace glab
 {
   void export_to_png(GLFWwindow* window, const char* filepath)
   {

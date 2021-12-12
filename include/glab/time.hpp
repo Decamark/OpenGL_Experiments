@@ -1,7 +1,7 @@
-#ifndef _GLE_TIME
-#define _GLE_TIME
+#ifndef _GLAB_TIME
+#define _GLAB_TIME
 
-namespace gle
+namespace glab
 {
   class Clock
   {

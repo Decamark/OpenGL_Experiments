@@ -1,5 +1,5 @@
-#ifndef _GLE_GLE
-#define _GLE_GLE
+#ifndef _GLAB_GLAB
+#define _GLAB_GLAB
 
 #include <iostream>
 #include <vector>
@@ -16,7 +16,7 @@
 
 #include <learnopengl/camera.h>
 
-namespace gle
+namespace glab
 {
   // glfw: whenever the window size changed (by OS or user resize) this callback function executes
   // ---------------------------------------------------------------------------------------------

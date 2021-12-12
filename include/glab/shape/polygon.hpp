@@ -1,9 +1,9 @@
-#ifndef _GLE_SHAPE_POLYGON
-#define _GLE_SHAPE_POLYGON
+#ifndef _GLAB_SHAPE_POLYGON
+#define _GLAB_SHAPE_POLYGON
 
-#include <gle/shape.hpp>
+#include <glab/shape.hpp>
 
-namespace gle
+namespace glab
 {
   class Line : public Shape
   {
@@ -63,6 +63,6 @@ namespace gle
     }
   };
 
-} // namespace gle
+} // namespace glab
 
 #endif

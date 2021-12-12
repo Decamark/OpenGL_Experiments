@@ -1,10 +1,10 @@
-#ifndef _GLE_GRID
-#define _GLE_GRID
+#ifndef _GLAB_GRID
+#define _GLAB_GRID
 
-#include <gle/shape.hpp>
+#include <glab/shape.hpp>
 #include <learnopengl/shader_m.h>
 
-namespace gle
+namespace glab
 {
   class Grid : public Shape
   {
@@ -121,9 +121,9 @@ namespace gle
   {
   private:
     Shader shader;
-    gle::Tetragon tetra;
+    Tetragon tetra;
   public:
-    GridA(Shader shader = Shader3dColor()) : shader(shader), tetra(gle::Tetragon("resources/coord_tex.png"))
+    GridA(Shader shader = Shader3dColor()) : shader(shader), tetra(Tetragon("resources/coord_tex.png"))
     {
       shader.setInt("texture0", tetra.texture);
     }

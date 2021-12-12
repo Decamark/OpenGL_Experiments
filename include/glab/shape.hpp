@@ -1,15 +1,15 @@
-#ifndef _GLE_SHAPE
-#define _GLE_SHAPE
+#ifndef _GLAB_SHAPE
+#define _GLAB_SHAPE
 
 #include <iostream>
 #include <functional>
 #include <numeric>
 
-#include <gle/gle.hpp>
+#include <glab/glab.hpp>
 
 #include <learnopengl/shader_m.h>
 
-namespace gle
+namespace glab
 {
   template <typename T>
   void operator+=(std::vector<T>& v1, std::vector<T>& v2)
@@ -582,8 +582,8 @@ namespace gle
       setPos(x, y, z);
     }
   }; // class Sphere
-} // namespace gle
+} // namespace glab
 
-#include <gle/shape/polygon.hpp>
+#include <glab/shape/polygon.hpp>
 
 #endif

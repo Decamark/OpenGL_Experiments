@@ -4,17 +4,16 @@
 
 #include <functional>
 
-#include <gle/gle.hpp>
-#include <gle/export.hpp>
-#include <gle/shape.hpp>
-#include <gle/grid.hpp>
-#include <gle/time.hpp>
+#include <glab/glab.hpp>
+#include <glab/shape.hpp>
+#include <glab/grid.hpp>
+#include <glab/time.hpp>
 
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
-auto* window = gle::setup(1200, 800, "GLab");
-Camera camera(window, glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
+auto* window = glab::setup(1200, 800, "glab");
+Camera camera(window, glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -35.0f);
 
 int main()
 {
@@ -30,13 +29,13 @@ int main()
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
 
-  gle::Grid grid(100.0f);
+  glab::Grid grid(100.0f);
   grid.setP(projection);
 
-  gle::Triangle tri(5.0f, 5.0f, 5.0f, 5.0f);
+  glab::Triangle tri(5.0f, 5.0f, 5.0f, 5.0f);
   tri.setP(projection);
 
-  gle::Clock clock;
+  glab::Clock clock;
   while (!glfwWindowShouldClose(window))
   {
     float dt = clock.tick();
