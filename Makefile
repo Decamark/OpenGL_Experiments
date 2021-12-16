@@ -30,3 +30,8 @@ physics:
 misc:
 	g++ -std=c++17 -I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
 	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./lab/misc/$(no)_*.cpp)
+
+# Previous works. They're messed up and I'm going to delete them at some point.
+previous:
+	g++ -std=c++17 -I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
+	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./lab/previous/$(no)*.cpp)
