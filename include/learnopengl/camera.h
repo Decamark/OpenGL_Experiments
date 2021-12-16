@@ -5,7 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <ctime>
+#include <sstream>
 #include <vector>
+
+#include <glab/export.hpp>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement
@@ -125,6 +129,16 @@ public:
   {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+      std::time_t t = std::time(0);
+      std::tm* now = std::localtime(&t);
+      // std::string filename = ".png";
+      std::stringstream ss;
+      ss << now->tm_year + 1900 << now->tm_mon + 1 << now->tm_mday << 'T'
+         << now->tm_hour << now->tm_min << now->tm_sec << ".png";
+      glab::export_to_png(window, ss.str().c_str());
+    }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
       this->ProcessKeyboard(FORWARD, dt);

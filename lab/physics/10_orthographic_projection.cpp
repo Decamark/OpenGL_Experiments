@@ -2,14 +2,11 @@
  * (Physics) 10: Orthographic projection
  */
 
-#include <functional>
-
 #include <glab/glab.hpp>
 #include <glab/shape.hpp>
 #include <glab/grid.hpp>
 #include <glab/time.hpp>
 
-#include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
 auto* window = glab::setup(1200, 800, "glab");
