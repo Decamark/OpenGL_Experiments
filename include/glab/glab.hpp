@@ -16,15 +16,70 @@
 
 #include <learnopengl/camera.h>
 
+extern GLFWwindow* window;
+extern Camera camera;
+
 namespace glab
 {
   // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-  // ---------------------------------------------------------------------------------------------
   void framebuffer_size_callback(GLFWwindow* window, int width, int height)
   {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+  }
+
+  // glfw: whenever the mouse moves, this callback is called
+  void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+  {
+    static bool firstMove = true;
+    static float lastX, lastY;
+    if (firstMove)
+    {
+      lastX = xpos;
+      lastY = ypos;
+      firstMove = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+  }
+
+  // glfw: whenever the mouse scroll wheel scrolls, this callback is called
+  // ----------------------------------------------------------------------
+  void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+  {
+    camera.ProcessMouseScroll(yoffset);
+  }
+
+  // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+  void processInput(float dt)
+  {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+      glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+      std::time_t t = std::time(0);
+      std::tm* now = std::localtime(&t);
+      std::stringstream ss;
+      ss << now->tm_year + 1900 << now->tm_mon + 1 << now->tm_mday << 'T'
+         << now->tm_hour << now->tm_min << now->tm_sec << ".png";
+      glab::export_to_png(window, ss.str().c_str());
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      camera.ProcessKeyboard(FORWARD, dt);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      camera.ProcessKeyboard(BACKWARD, dt);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      camera.ProcessKeyboard(LEFT, dt);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      camera.ProcessKeyboard(RIGHT, dt);
   }
 
   GLFWwindow* setup(int width, int height, const char* name)

@@ -12,7 +12,7 @@
 #include <learnopengl/camera.h>
 
 GLFWwindow* window = glab::setup(/* Width */ 1200, /* Height*/ 800, "glab");
-Camera camera(window, glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
+Camera camera(glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
 
 int main()
 {
@@ -28,7 +28,7 @@ int main()
   while (!glfwWindowShouldClose(window))
   {
     float dt = clock.tick();
-    camera.processInput(dt);
+    glab::processInput(dt);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

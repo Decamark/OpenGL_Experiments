@@ -12,7 +12,7 @@
 #include <glab/export.hpp>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
-enum Camera_Movement
+enum CameraMovement
 {
   FORWARD,
   BACKWARD,
@@ -46,10 +46,8 @@ public:
   float Zoom;
 
   // constructor with vectors
-  Camera(GLFWwindow* window,
-         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
-         float yaw = YAW, float pitch = PITCH) : window(window),
-                                                 Front(glm::vec3(0.0f, 0.0f, -1.0f)),
+  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+         float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)),
                                                  MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
   {
     Position = position;
@@ -58,11 +56,10 @@ public:
     Pitch = pitch;
     updateCameraVectors();
   }
+
   // constructor with scalar values
-  Camera(GLFWwindow* window,
-         float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
-    : window(window),
-      Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+  Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
+    : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
   {
     Position = glm::vec3(posX, posY, posZ);
     WorldUp = glm::vec3(upX, upY, upZ);
@@ -77,8 +74,9 @@ public:
     return glm::lookAt(Position, Position + Front, Up);
   }
 
-  // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-  void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+  // processes input received from any keyboard-like input system.
+  // Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
+  void ProcessKeyboard(CameraMovement direction, float deltaTime)
   {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD)
@@ -123,34 +121,7 @@ public:
       Zoom = 45.0f;
   }
 
-  // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-  // ---------------------------------------------------------------------------------------------------------
-  void processInput(float dt)
-  {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
-      std::time_t t = std::time(0);
-      std::tm* now = std::localtime(&t);
-      std::stringstream ss;
-      ss << now->tm_year + 1900 << now->tm_mon + 1 << now->tm_mday << 'T'
-         << now->tm_hour << now->tm_min << now->tm_sec << ".png";
-      glab::export_to_png(window, ss.str().c_str());
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      this->ProcessKeyboard(FORWARD, dt);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      this->ProcessKeyboard(BACKWARD, dt);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-      this->ProcessKeyboard(LEFT, dt);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-      this->ProcessKeyboard(RIGHT, dt);
-  }
-
 private:
-  GLFWwindow* window;
 
   // calculates the front vector from the Camera's (updated) Euler Angles
   void updateCameraVectors()
@@ -166,36 +137,5 @@ private:
     Up    = glm::normalize(glm::cross(Right, Front));
   }
 };
-
-extern Camera camera;
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-  static bool firstMove = true;
-  static float lastX, lastY;
-  if (firstMove)
-  {
-    lastX = xpos;
-    lastY = ypos;
-    firstMove = false;
-  }
-
-  float xoffset = xpos - lastX;
-  float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-  lastX = xpos;
-  lastY = ypos;
-
-  camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-  camera.ProcessMouseScroll(yoffset);
-}
 
 #endif
