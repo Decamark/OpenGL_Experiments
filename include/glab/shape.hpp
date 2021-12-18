@@ -157,7 +157,7 @@ namespace glab
     unsigned int guide_vao, guide_vbo;
     Shader shader, guide_shader = Shader3dColor();
   public:
-    GLenum mode = GL_TRIANGLES;
+    GLenum primitive = GL_TRIANGLES;
     GLenum rasterization = GL_FILL;
     std::vector<unsigned int> textures;
     glm::mat4 model = glm::mat4(1.0f);
@@ -327,10 +327,10 @@ namespace glab
 
     void draw()
     {
-      drawElements(mode);
+      drawElements(primitive);
     }
 
-    void drawElements(GLenum mode)
+    void drawElements(GLenum primitive)
     {
       shader.use();
 
@@ -350,17 +350,17 @@ namespace glab
           glEnable(GL_BLEND);
           glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
           glBindTexture(GL_TEXTURE_2D, textures[i]);
-          glDrawRangeElements(mode, size/sizeof(float)/textures.size()*i, size/sizeof(float)/textures.size()*(i+1)-1, size/sizeof(float)/textures.size(), GL_UNSIGNED_INT, 0);
+          glDrawRangeElements(primitive, size/sizeof(float)/textures.size()*i, size/sizeof(float)/textures.size()*(i+1)-1, size/sizeof(float)/textures.size(), GL_UNSIGNED_INT, 0);
         }
       }
       else
-        glDrawElements(mode, size/sizeof(float), GL_UNSIGNED_INT, 0);
+        glDrawElements(primitive, size/sizeof(float), GL_UNSIGNED_INT, 0);
 
       glBindVertexArray(0);
     }
 
     [[deprecated("Use drawElements() instead")]]
-    void drawArrays(GLenum mode, /* The number of the vertices */ int size)
+    void drawArrays(GLenum primitive, /* The number of the vertices */ int size)
     {
       shader.use();
 
@@ -368,7 +368,7 @@ namespace glab
 
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       // glDrawArrays(GL_LINES, 0, size);
-      glDrawArrays(mode, 0, size);
+      glDrawArrays(primitive, 0, size);
 
       glBindVertexArray(0);
     }

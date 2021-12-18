@@ -14,7 +14,7 @@ namespace glab
     //   x3, y3, z3, r3, g3, b3 }
     Triangle(std::vector<float> vertices)
     {
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
 
       std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
       ebo = order(vao, {0, 1, 2});
@@ -23,7 +23,7 @@ namespace glab
     // Equilateral triangle with length "l" each
     Triangle(float x, float y, float z, float l = 1.0f)
     {
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
 
       std::vector<float> vertices = {
         0.0f,  l/2, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -51,7 +51,7 @@ namespace glab
     //   x3, y3, z3, r3, g3, b3 }
     Tetragon(std::vector<float> vertices)
     {
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
 
       std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
       ebo = order(vao, {0, 1, 2, 2, 1, 3});
@@ -59,7 +59,7 @@ namespace glab
 
     Tetragon(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f, float h = 1.0f)
     {
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
 
       std::vector<float> vertices = {
         -w/2,  h/2, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -76,7 +76,7 @@ namespace glab
     // With a texture
     Tetragon(float x, float y, float z, float w, float h, const char* filepath) : Shape(Shader3dTexture())
     {
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
 
       std::vector<float> vertices = {
         -w/2,  h/2, 0.0f, 0.0f, 1.0f,

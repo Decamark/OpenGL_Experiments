@@ -17,7 +17,7 @@ namespace glab
     // v1--v3
     Cube(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f) : x0(x), y0(y), z0(z)
     {
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
 
       std::vector<float> vertices = {
         -w/2,  w/2,  w/2, 1.0f, 0.0f, 0.0f,
@@ -56,7 +56,7 @@ namespace glab
            Shader shader = Shader3dColor()) : x(x), y(y), z(z), r(r)
     {
       // The primitive to use when drawing
-      mode = GL_TRIANGLES;
+      primitive = GL_TRIANGLES;
       rasterization = GL_LINE;
 
       const float PI = glm::pi<float>();

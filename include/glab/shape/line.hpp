@@ -13,7 +13,7 @@ namespace glab
     //   x2, y2, z2, r2, g2, b2 }
     Line(std::vector<float> vertices)
     {
-      mode = GL_LINES;
+      primitive = GL_LINES;
 
       std::tie(vao,vbo) = partition(vertices, 2, 3, 3);
       ebo = order(vao, {0, 1});
@@ -23,7 +23,7 @@ namespace glab
     Line(std::vector<float> p1, std::vector<float> /* Color */ c1,
          std::vector<float> p2, std::vector<float> /* Color */ c2)
     {
-      mode = GL_LINES;
+      primitive = GL_LINES;
 
       std::vector<float> vertices;
       vertices += p1;
@@ -38,7 +38,7 @@ namespace glab
     Line(glm::vec3 p1, glm::vec3 /* Color */ c1,
          glm::vec3 p2, glm::vec3 /* Color */ c2)
     {
-      mode = GL_LINES;
+      primitive = GL_LINES;
 
       std::vector<float> vertices;
       vertices.push_back(p1.x); vertices.push_back(p1.y); vertices.push_back(p1.z);
