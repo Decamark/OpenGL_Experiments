@@ -57,7 +57,7 @@ namespace glab
       ebo = order(vao, {0, 1, 2, 2, 1, 3});
     }
 
-    Tetragon(float w = 1.0f, float h = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f)
+    Tetragon(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f, float h = 1.0f)
     {
       mode = GL_TRIANGLES;
 
@@ -74,7 +74,7 @@ namespace glab
     }
 
     // With a texture
-    Tetragon(float w, float h, float x, float y, float z, const char* filepath) : Shape(Shader3dTexture())
+    Tetragon(float x, float y, float z, float w, float h, const char* filepath) : Shape(Shader3dTexture())
     {
       mode = GL_TRIANGLES;
 

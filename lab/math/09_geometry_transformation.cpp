@@ -32,35 +32,23 @@ int main()
   glab::Grid grid(100.0f);
   grid.setP(projection);
 
-  glab::Tetragon tetra1(10.0f, 10.0f, 15.0f, 15.0f, 15.0f);
+  glab::Tetragon tetra1(15.0f, 15.0f, 15.0f, 10.0f, 10.0f);
   tetra1.setP(projection);
 
-  glab::Tetragon tetra2(10.0f, 10.0f, 30.0f, 15.0f, 15.0f);
+  glab::Tetragon tetra2(30.0f, 15.0f, 15.0f, 10.0f, 10.0f);
   tetra2.setP(projection);
 
-  glab::Tetragon tetra3(10.0f, 10.0f, 45.0f, 15.0f, 15.0f);
+  glab::Tetragon tetra3(45.0f, 15.0f, 15.0f, 10.0f, 10.0f);
   tetra3.setP(projection);
 
-  glab::Tetragon tetra4(10.0f, 10.0f, 60.0f, 15.0f, 15.0f);
+  glab::Tetragon tetra4(60.0f, 15.0f, 15.0f, 10.0f, 10.0f);
   tetra4.setP(projection);
 
-  glab::Tetragon tetra5(10.0f, 10.0f, 15.0f, 30.0f, 15.0f);
+  glab::Tetragon tetra5(15.0f, 30.0f, 15.0f, 10.0f, 10.0f);
   tetra5.setP(projection);
-  // tetra5.translate({-0.0f, -30.0f, -15.0f});
-  // glab::debug(tetra5.model);
-  // std::cout << "-----" << std::endl;
-  // tetra5.rotateAround(90.0f, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
-  // glab::debug(tetra5.model);
-  // std::cout << "-----" << std::endl;
-  // tetra5.translate({10.0f, 30.0f, 0.0f});
-  // glab::debug(tetra5.model);
-  // tetra5.translate({0.0f, 30.0f, 15.0f});
 
-  glab::Tetragon tetra6(10.0f, 10.0f, 30.0f, 30.0f, 15.0f);
+  glab::Tetragon tetra6(30.0f, 30.0f, 15.0f, 10.0f, 10.0f);
   tetra6.setP(projection);
-
-  // glab::Tetragon tetra7(10.0f, 10.0f, 45.0f, 30.0f, 15.0f);
-  // tetra7.setP(projection);
 
   glab::Clock clock;
   while (!glfwWindowShouldClose(window))
