@@ -16,8 +16,8 @@
 
 #include <learnopengl/camera.h>
 
-extern GLFWwindow* window;
-extern Camera camera;
+GLFWwindow* window;
+Camera* camera;
 
 namespace glab
 {
@@ -47,14 +47,14 @@ namespace glab
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    camera->ProcessMouseMovement(xoffset, yoffset);
   }
 
   // glfw: whenever the mouse scroll wheel scrolls, this callback is called
   // ----------------------------------------------------------------------
   void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
   {
-    camera.ProcessMouseScroll(yoffset);
+    camera->ProcessMouseScroll(yoffset);
   }
 
   // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -73,16 +73,16 @@ namespace glab
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      camera.ProcessKeyboard(FORWARD, dt);
+      camera->ProcessKeyboard(FORWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      camera.ProcessKeyboard(BACKWARD, dt);
+      camera->ProcessKeyboard(BACKWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-      camera.ProcessKeyboard(LEFT, dt);
+      camera->ProcessKeyboard(LEFT, dt);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-      camera.ProcessKeyboard(RIGHT, dt);
+      camera->ProcessKeyboard(RIGHT, dt);
   }
 
-  GLFWwindow* setup(int width, int height, const char* name)
+  void setup(int width, int height, const char* name, glm::vec3 position, glm::vec3 up, float yaw, float pitch)
   {
     // glfw: initialize and configure
     // ------------------------------
@@ -98,7 +98,7 @@ namespace glab
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
+    window = glfwCreateWindow(width, height, name, NULL, NULL);
     if (window == NULL)
     {
       std::cout << "Failed to create GLFW window" << std::endl;
@@ -126,7 +126,7 @@ namespace glab
     // configure global opengl state
     glEnable(GL_DEPTH_TEST);
 
-    return window;
+    camera = new Camera(glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
   }
 }
 
