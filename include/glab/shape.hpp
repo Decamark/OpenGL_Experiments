@@ -156,9 +156,9 @@ namespace glab
     unsigned int       vao,       vbo, ebo;
     unsigned int guide_vao, guide_vbo;
     Shader shader, guide_shader = Shader3dColor();
+  public:
     GLenum mode = GL_TRIANGLES;
     GLenum rasterization = GL_FILL;
-  public:
     std::vector<unsigned int> textures;
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -253,6 +253,76 @@ namespace glab
     void move(std::function<void(double)> motion, double t)
     {
       motion(t);
+    }
+
+    // Check if this shape intersects with a ray (Ordinally using Camera's "Front" matrix)
+    // [CAUTION] Works only with GL_TRIANGLES
+    // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
+    //
+    // a, b, c: vertex
+    // o: ray's origin
+    // od: ray's vector
+    bool intersect(/* ray's origin */ glm::vec3 o, /* ray's vector */ glm::vec3 od)
+    {
+      glBindVertexArray(vao);
+      int stride; // The number of elements a vertex holds
+      glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+      stride /= sizeof(float);
+
+      glBindBuffer(GL_ARRAY_BUFFER, vbo);
+      float* vertices = (float*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+      unsigned int* indices = (unsigned int*) glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);
+      int size = 0; // The number of indices
+      glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+      size /= sizeof(float);
+
+      bool res = false;
+      for (int i=0; i < size; i+=3) {
+        // This is a's local coordinate
+        glm::vec4 a_ = { vertices[ stride*indices[i] ],   vertices[ stride*indices[i]+1 ], vertices[ stride*indices[i]+2 ],     1.0f };
+        // This is the world coordinate
+        glm::vec3 a(model * a_);
+        glm::vec4 b_ = { vertices[ stride*indices[i+1] ], vertices[ stride*indices[i+1]+1 ], vertices[ stride*indices[i+1]+2 ], 1.0f };
+        glm::vec3 b(model * b_);
+        glm::vec4 c_ = { vertices[ stride*indices[i+2] ], vertices[ stride*indices[i+2]+1 ], vertices[ stride*indices[i+2]+2 ], 1.0f };
+        glm::vec3 c(model * c_);
+
+        glm::vec3 ab = b - a;
+        glm::vec3 ac = c - a;
+        glm::vec3 p  = glm::cross(od, ac);
+        float det    = glm::dot(ab, p);
+        float invDet = 1 / det;
+
+        const float EPSILON = 0.0000001;
+        if (std::fabs(det) < EPSILON) {
+          res |= false;
+          continue;
+        }
+
+        glm::vec3 ao = o - a;
+        float u = glm::dot(ao, p) * invDet;
+        if (u < 0 || u > 1) {
+          res |= false;
+          continue;
+        }
+
+        glm::vec3 q = glm::cross(ao, ab);
+        float v = glm::dot(od, q) * invDet;
+        if (v < 0 || u + v > 1) {
+          res |= false;
+          continue;
+        }
+
+        float t = glm::dot(ac, q) * invDet;
+        res |= true;
+        break;
+      }
+
+      glUnmapBuffer(GL_ARRAY_BUFFER);
+      glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+      return res;
     }
 
     void draw()
