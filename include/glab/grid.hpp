@@ -16,6 +16,8 @@ namespace glab
 
     Grid(float l, float m, float n, Shader shader = Shader3dColor()) : l(l), m(m), n(n), Shape(shader)
     {
+      primitive = GL_LINES;
+
       std::vector<float> vs;
       // xy-plane
       for (float y=0.0f; y<=m; y++) {
@@ -105,16 +107,21 @@ namespace glab
         vs.push_back(0.4f);
       }
       std::tie(vao,vbo) = partition(vs, 2, 3, 3);
+
+      std::vector<unsigned int> indices;
+      for (unsigned int i=0; i<4*(l+m+n)+12; i++)
+        indices.push_back(i);
+      ebo = order(vao, indices);
     }
 
-    void draw()
-    {
-      shader.use();
-      glBindVertexArray(vao);
-      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      glDrawArrays(GL_LINES, 0, 4*(l+m+n)+12);
-      glBindVertexArray(0);
-    }
+    // void draw()
+    // {
+    //   shader.use();
+    //   glBindVertexArray(vao);
+    //   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //   glDrawArrays(GL_LINES, 0, 4*(l+m+n)+12);
+    //   glBindVertexArray(0);
+    // }
   };
 
   // class GridA

@@ -16,7 +16,6 @@ int main()
   glab::setup(/* Width */ 1200, /* Height*/ 800, "glab", camera, projection);
 
   glab::Grid grid(100.0f);
-  grid.setP(projection);
 
   glab::Line l(std::vector<float>({5, 5, 5}), {1, 0, 0}, {10, 10, 10}, {0, 1, 0});
 
@@ -29,7 +28,6 @@ int main()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    grid.setV(camera->GetViewMatrix());
     grid.draw();
 
     l.draw();
