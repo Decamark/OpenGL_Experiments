@@ -32,7 +32,7 @@ int main()
   glab::Grid grid(100.0f);
   grid.setP(projection);
 
-  glab::Tetragon tetra(5.0f, 5.0f, 5.0f, 5.0f, 5.0f, "images/apple.png");
+  glab::Tetragon tetra(5.0f, 5.0f, 5.0f, 5.0f, 5.0f, "resources/apple.png");
   // glab::Tetragon tetra(5.0f, 5.0f, 5.0f, 5.0f, 5.0f);
   tetra.setP(projection);
 
