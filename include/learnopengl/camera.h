@@ -133,7 +133,6 @@ public:
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
       std::time_t t = std::time(0);
       std::tm* now = std::localtime(&t);
-      // std::string filename = ".png";
       std::stringstream ss;
       ss << now->tm_year + 1900 << now->tm_mon + 1 << now->tm_mday << 'T'
          << now->tm_hour << now->tm_min << now->tm_sec << ".png";
