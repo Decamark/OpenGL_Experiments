@@ -425,9 +425,10 @@ namespace glab
       glDrawArrays(GL_LINES, 0, 6);
       glBindVertexArray(0);
     }
-  };
+  }; // class Shape
 } // namespace glab
 
+#include <glab/shape/line.hpp>
 #include <glab/shape/polygon.hpp>
 #include <glab/shape/polyhedron.hpp>
 

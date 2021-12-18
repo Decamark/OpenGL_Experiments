@@ -48,7 +48,7 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Slightly sliding the camera's position
-    glab::Line ray(camera.Position+glm::vec3(0.1f, 0.1f, 0.1f), {1.0f, 0.0f, 0.0f}, camera.Position+camera.Front, {0.0f, 1.0f, 0.0f});
+    glab::Line ray(camera.Position+glm::vec3(0.0f, -0.05f, 0.0f), {1.0f, 0.0f, 0.0f}, camera.Position+camera.Front, {0.0f, 1.0f, 0.0f});
     ray.setP(projection);
     ray.setV(camera.GetViewMatrix());
     ray.draw();
