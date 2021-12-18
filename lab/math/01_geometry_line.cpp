@@ -30,8 +30,7 @@ int main()
 
     grid.draw();
 
-    l.draw();
-    l.drawGuide();
+    l.draw(/* needGuide = */ true);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

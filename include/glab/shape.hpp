@@ -325,9 +325,10 @@ namespace glab
       return res;
     }
 
-    void draw()
+    void draw(bool needGuide = false)
     {
       drawElements(primitive);
+      if (needGuide) drawGuide();
     }
 
     void drawElements(GLenum primitive)
