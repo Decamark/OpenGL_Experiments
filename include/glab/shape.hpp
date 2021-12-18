@@ -333,9 +333,10 @@ namespace glab
 
     void drawElements(GLenum primitive)
     {
-      shader.use();
       setV(camera[CAMERA_SLOT_NO]->GetViewMatrix());
       setP(projector[PROJECTOR_SLOT_NO]);
+
+      shader.use();
 
       glBindVertexArray(vao);
 
@@ -378,6 +379,9 @@ namespace glab
 
     void drawGuide()
     {
+      setV(camera[CAMERA_SLOT_NO]->GetViewMatrix());
+      setP(projector[PROJECTOR_SLOT_NO]);
+
       guide_shader.use();
 
       std::vector<float> guide_vs(36, 0.0f);
