@@ -333,6 +333,8 @@ namespace glab
     void drawElements(GLenum primitive)
     {
       shader.use();
+      setV(camera[CAMERA_SLOT_NO]->GetViewMatrix());
+      setP(projector[PROJECTOR_SLOT_NO]);
 
       glBindVertexArray(vao);
 

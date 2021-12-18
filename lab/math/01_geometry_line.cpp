@@ -9,17 +9,16 @@
 
 int main()
 {
-  // Initial setup including window and camera
-  glab::setup(/* Width */ 1200, /* Height*/ 800, "glab",
-              /* Camera */ glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
-
+  Camera* camera = new Camera(glm::vec3(8.0f, 12.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f);
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
+
+  // Initial setup
+  glab::setup(/* Width */ 1200, /* Height*/ 800, "glab", camera, projection);
 
   glab::Grid grid(100.0f);
   grid.setP(projection);
 
   glab::Line l(std::vector<float>({5, 5, 5}), {1, 0, 0}, {10, 10, 10}, {0, 1, 0});
-  l.setP(projection);
 
   glab::Clock clock;
   while (!glfwWindowShouldClose(window))
@@ -33,7 +32,6 @@ int main()
     grid.setV(camera->GetViewMatrix());
     grid.draw();
 
-    l.setV(camera->GetViewMatrix());
     l.draw();
     l.drawGuide();
 
