@@ -32,7 +32,7 @@ int main()
   glab::Grid grid(100.0f);
   grid.setP(projection);
 
-  glab::Sphere s(5, 40, 40, 40, 100, 100);
+  glab::Sphere s(40, 40, 40, 5, 100, 100);
   s.setP(projection);
 
   glab::Clock clock;

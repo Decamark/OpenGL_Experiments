@@ -48,12 +48,12 @@ namespace glab
   class Sphere : public Shape
   {
   public:
-    float r;
     float x, y, z;
+    float r;
 
-    Sphere(/* radius */ float r, float x, float y, float z,
+    Sphere(float x, float y, float z, float /* radius */ r,
            int stackCount, int sectorCount,
-           Shader shader = Shader3dColor()) : r(r), x(x), y(y), z(z)
+           Shader shader = Shader3dColor()) : x(x), y(y), z(z), r(r)
     {
       // The primitive to use when drawing
       mode = GL_TRIANGLES;
