@@ -2,8 +2,6 @@
  * (Math) 03: Tetragon
  */
 
-#include <functional>
-
 #include <glab/glab.hpp>
 #include <glab/shape.hpp>
 #include <glab/grid.hpp>
