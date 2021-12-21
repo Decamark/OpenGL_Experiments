@@ -9,14 +9,19 @@
 
 int main()
 {
-  // Initial setup
-  Camera* camera = new Camera(glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -35.0f);
+  glab::initWindow(/* Width */ 1200, /* Height*/ 800, "glab");
+
+  Camera camera0 = Camera(glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -35.0f);
+
   // glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
   // Each value (left/right/bottom/top) is decided under consideration of the measure in the eye space
   glm::mat4 projection = glm::ortho(-9.0f, 9.0f, -6.0f, 6.0f, 0.1f, 50.0f);
+
   // Specifying different aspect ratio from the one of display results in a squashed shape
   // glm::mat4 projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 50.0f);
-  glab::setup(/* Width */ 1200, /* Height*/ 800, "glab", camera, projection);
+
+  camera0 |= projection;
+  camera  |= camera0;
 
   glab::Grid grid(50);
 
@@ -31,7 +36,7 @@ int main()
     glab::processInput(clock.tick());
     std::cout << clock.t << std::endl;
 
-    cube.draw(/* needGuide = */ true);
+    cube.draw(/* needGuide */ true);
 
     grid.draw();
 

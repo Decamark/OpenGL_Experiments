@@ -11,11 +11,12 @@
 
 int main()
 {
-  Camera* camera = new Camera(glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -45.0f);
+  Camera camera0 = Camera(glm::vec3(25.0f, 25.0f, 25.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -45.0f);
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
+  camera0 |= projection;
+  camera  |= camera0;
 
-  // Initial setup
-  glab::setup(/* Width */ 1200, /* Height*/ 800, "glab", camera, projection);
+  glab::initWindow(/* Width */ 1200, /* Height*/ 800, "glab");
 
   glab::Grid grid(50);
 

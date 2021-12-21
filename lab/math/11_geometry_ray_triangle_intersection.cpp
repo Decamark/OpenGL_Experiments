@@ -11,14 +11,14 @@
 
 int main()
 {
-  Camera* camera = new Camera(glm::vec3(15.0f, 25.0f, 35.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -25.0f);
+  Camera camera0 = Camera(glm::vec3(15.0f, 25.0f, 35.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -25.0f);
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
+  camera0 |= projection;
+  camera  |= camera0;
 
-  // Initial setup
-  glab::setup(/* Width */ 1200, /* Height*/ 800, "glab", camera, projection);
+  glab::initWindow(/* Width */ 1200, /* Height*/ 800, "glab");
 
   glab::Grid grid(100.0f);
-  grid.setP(projection);
 
   glab::Triangle tri(10, 10, 10, 5);
 
@@ -34,17 +34,17 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Slightly sliding the camera's position
-    glab::Line ray(camera->Position+glm::vec3(0.0f, -0.05f, 0.0f), {1.0f, 0.0f, 0.0f}, camera->Position+camera->Front, {0.0f, 1.0f, 0.0f});
+    glab::Line ray((*camera).Position+glm::vec3(0.0f, -0.05f, 0.0f), {1.0f, 0.0f, 0.0f}, (*camera).Position+(*camera).Front, {0.0f, 1.0f, 0.0f});
     ray.draw();
 
-    if (tri.intersect(camera->Position, camera->Front))
+    if (tri.intersect((*camera).Position, (*camera).Front))
       tri.rasterization = GL_FILL;
     else
       tri.rasterization = GL_LINE;
     
     tri.draw(/* needGuide = */ true);
 
-    if (cube.intersect(camera->Position, camera->Front))
+    if (cube.intersect((*camera).Position, (*camera).Front))
       cube.rasterization = GL_FILL;
     else
       cube.rasterization = GL_LINE;
