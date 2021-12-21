@@ -16,6 +16,8 @@
 
 #include <learnopengl/camera.h>
 
+#include <glab/time.hpp>
+
 GLFWwindow* window;
 Containable<Camera> camera;
 
@@ -58,12 +60,11 @@ namespace glab
   }
 
   // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-  void processInput(float dt)
+  void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE and action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+    if (key == GLFW_KEY_T and action == GLFW_PRESS) {
       std::time_t t = std::time(0);
       std::tm* now = std::localtime(&t);
       std::stringstream ss;
@@ -72,14 +73,23 @@ namespace glab
       glab::export_to_png(window, ss.str().c_str());
     }
 
+    if (GLFW_KEY_0 <= key and key <= GLFW_KEY_9 and action == GLFW_PRESS)
+      camera(key - GLFW_KEY_0);
+
+    if (key == GLFW_KEY_P and action == GLFW_PRESS)
+      ++(*camera);
+  }
+
+  void getKeyWSAD()
+  {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      (*camera).ProcessKeyboard(FORWARD, dt);
+      (*camera).ProcessKeyboard(FORWARD, clock.dt);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      (*camera).ProcessKeyboard(BACKWARD, dt);
+      (*camera).ProcessKeyboard(BACKWARD, clock.dt);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-      (*camera).ProcessKeyboard(LEFT, dt);
+      (*camera).ProcessKeyboard(LEFT, clock.dt);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-      (*camera).ProcessKeyboard(RIGHT, dt);
+      (*camera).ProcessKeyboard(RIGHT, clock.dt);
   }
 
   void initWindow(int width, int height, const char* name)
@@ -119,6 +129,7 @@ namespace glab
 
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, keyboard_callback);
 
     // tell GLFW to hide our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

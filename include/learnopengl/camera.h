@@ -35,7 +35,7 @@ public:
   // Switch to the next elem
   Elem& operator++()
   {
-    eid = eid+1 % cont.size();
+    eid = (eid+1) % cont.size();
     return cont[eid];
   }
 
