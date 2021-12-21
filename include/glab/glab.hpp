@@ -16,15 +16,8 @@
 
 #include <learnopengl/camera.h>
 
-typedef unsigned int uint;
-
 GLFWwindow* window;
-// Camera* camera;
-std::vector<Camera*> camera;
-std::vector<glm::mat4> projector;
-
-uint CAMERA_SLOT_NO = 0;
-uint PROJECTOR_SLOT_NO = 0;
+Containable<Camera> camera;
 
 namespace glab
 {
@@ -54,14 +47,14 @@ namespace glab
     lastX = xpos;
     lastY = ypos;
 
-    camera[CAMERA_SLOT_NO]->ProcessMouseMovement(xoffset, yoffset);
+    (*camera).ProcessMouseMovement(xoffset, yoffset);
   }
 
   // glfw: whenever the mouse scroll wheel scrolls, this callback is called
   // ----------------------------------------------------------------------
   void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
   {
-    camera[CAMERA_SLOT_NO]->ProcessMouseScroll(yoffset);
+    (*camera).ProcessMouseScroll(yoffset);
   }
 
   // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -80,16 +73,16 @@ namespace glab
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      camera[CAMERA_SLOT_NO]->ProcessKeyboard(FORWARD, dt);
+      (*camera).ProcessKeyboard(FORWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      camera[CAMERA_SLOT_NO]->ProcessKeyboard(BACKWARD, dt);
+      (*camera).ProcessKeyboard(BACKWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-      camera[CAMERA_SLOT_NO]->ProcessKeyboard(LEFT, dt);
+      (*camera).ProcessKeyboard(LEFT, dt);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-      camera[CAMERA_SLOT_NO]->ProcessKeyboard(RIGHT, dt);
+      (*camera).ProcessKeyboard(RIGHT, dt);
   }
 
-  void setup(int width, int height, const char* name, Camera* camera0, glm::mat4 projection)
+  void initWindow(int width, int height, const char* name)
   {
     // glfw: initialize and configure
     // ------------------------------
@@ -132,9 +125,6 @@ namespace glab
 
     // configure global opengl state
     glEnable(GL_DEPTH_TEST);
-
-    camera.push_back(camera0);
-    projector.push_back(projection);
   }
 }
 

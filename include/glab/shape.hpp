@@ -333,8 +333,8 @@ namespace glab
 
     void drawElements(GLenum primitive)
     {
-      setV(camera[CAMERA_SLOT_NO]->GetViewMatrix());
-      setP(projector[PROJECTOR_SLOT_NO]);
+      setV((*camera).GetViewMatrix());
+      setP((*camera).GetProjectionMatrix());
 
       shader.use();
 
@@ -379,8 +379,8 @@ namespace glab
 
     void drawGuide()
     {
-      setV(camera[CAMERA_SLOT_NO]->GetViewMatrix());
-      setP(projector[PROJECTOR_SLOT_NO]);
+      setV((*camera).GetViewMatrix());
+      setP((*camera).GetProjectionMatrix());
 
       guide_shader.use();
 

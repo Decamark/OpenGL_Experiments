@@ -11,6 +11,55 @@
 
 #include <glab/export.hpp>
 
+typedef unsigned int uint;
+
+template <typename Elem>
+class Containable
+{
+protected:
+  uint eid = 0;
+  std::vector<Elem> cont;
+public:
+  // Return the current elem
+  Elem& operator*()
+  {
+    return cont[eid];
+  }
+
+  // Return an elem at "id" but no switching
+  Elem& operator[](int id)
+  {
+    return cont[id];
+  }
+
+  // Switch to the next elem
+  Elem& operator++()
+  {
+    eid = eid+1 % cont.size();
+    return cont[eid];
+  }
+
+  // Switch to the prev elem
+  Elem& operator--()
+  {
+    eid = cont.size()-1 - ((cont.size()-eid)%cont.size());
+    return cont[eid];
+  }
+
+  // Switch to id
+  Elem& operator()(uint id)
+  {
+    eid = id;
+    return cont[eid];
+  }
+
+  // Add an elem
+  void operator|=(Elem e)
+  {
+    cont.push_back(e);
+  }
+};
+
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum CameraMovement
 {
@@ -28,7 +77,7 @@ const float SENSITIVITY =  0.2f;
 const float ZOOM        =  45.0f;
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-class Camera
+class Camera : public Containable<glm::mat4>
 {
 public:
   // camera Attributes
@@ -71,6 +120,12 @@ public:
   glm::mat4 GetViewMatrix()
   {
     return glm::lookAt(Position, Position + Front, Up);
+  }
+
+  // returns the projection matrix
+  glm::mat4 GetProjectionMatrix()
+  {
+    return cont[eid];
   }
 
   // processes input received from any keyboard-like input system.

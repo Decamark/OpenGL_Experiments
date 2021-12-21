@@ -11,13 +11,15 @@
 
 int main()
 {
-  // Initial setup
-  Camera* camera0 = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
-  glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 800.0f, 2.0f, 100.0f);
-  glab::setup(/* Width */ 800, /* Height*/ 800, "glab", camera0, projection);
+  glab::initWindow(/* Width */ 800, /* Height*/ 800, "glab");
 
-  Camera* camera1 = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
-  camera.push_back(camera1);
+  glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 800.0f, 2.0f, 100.0f);
+  Camera camera0 = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
+  camera0 |= projection;
+  camera  |= camera0;
+  Camera camera1 = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+  camera1 |= projection;
+  camera  |= camera1;
 
   glab::Grid grid(100.0f);
 
@@ -29,7 +31,7 @@ int main()
     // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    CAMERA_SLOT_NO = 0; // This leads to camera0's view matrix updated
+    camera(0);
     glab::processInput(clock.tick());
 
     grid.draw();
@@ -40,11 +42,11 @@ int main()
     std::cout << "[identity]" << std::endl;
     glab::debug(e);
     std::cout << "[view]" << std::endl;
-    glab::debug(camera[1]->GetViewMatrix());
+    glab::debug(camera[1].GetViewMatrix());
 
-    CAMERA_SLOT_NO = 1;
-    cube.draw(/* needGuide = */ true);
-    CAMERA_SLOT_NO = 0;
+    camera(1);
+    cube.draw(/* needGuide */ true);
+    camera(0);
 
     // ex 2) About projection matrix
     // http://www.songho.ca/opengl/gl_projectionmatrix.html
@@ -58,12 +60,12 @@ int main()
     //
     // So glm::perspective assumes the right-handed coordinates and produces the left-handed coordinates
     std::cout << "[Check that xz-axes are swithed by moving around]" << std::endl;
-    glab::debug(projection * camera[0]->GetViewMatrix() * cube.model * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f));
+    glab::debug(projection * camera[0].GetViewMatrix() * cube.model * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f));
 
     // ex 4) Camera is directed to the x-axis at first
     // This is because a vector (cos(theta), 0) is along the x-axis
     std::cout << "[Camera's direction]" << std::endl;
-    glab::debug(camera[0]->GetViewMatrix());
+    glab::debug((*camera).GetViewMatrix());
 
     glfwSwapBuffers(window);
     glfwPollEvents();
