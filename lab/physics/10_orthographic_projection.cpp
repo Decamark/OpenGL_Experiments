@@ -44,6 +44,6 @@ int main()
 
     glfwSwapBuffers(window);
     glfwPollEvents();
-    glab::getKeyWSAD();
+    glab::getKeyWASD();
   }
 }

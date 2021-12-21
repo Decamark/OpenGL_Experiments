@@ -11,13 +11,12 @@
 
 int main()
 {
+  glab::initWindow(/* Width */ 1200, /* Height*/ 800, "glab");
+
   Camera camera0 = Camera(glm::vec3(50.0f, 50.0f, 50.0f), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -30.0f);
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1200.0f / 800.0f, 0.1f, 100.0f);
   camera0 |= projection;
   camera  |= camera0;
-
-  // Initial setup
-  glab::initWindow(/* Width */ 1200, /* Height*/ 800, "glab");
 
   glab::Grid grid(100.0f);
 
@@ -28,11 +27,10 @@ int main()
   glab::Tetragon tetra5(15.0f, 30.0f, 15.0f, 10.0f, 10.0f);
   glab::Tetragon tetra6(30.0f, 30.0f, 15.0f, 10.0f, 10.0f);
 
-  glab::Clock clock;
+  glab::clock.start();
   while (!glfwWindowShouldClose(window))
   {
-    float dt = clock.tick();
-    glab::processInput(dt);
+    float dt = glab::clock.tick();
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -85,5 +83,6 @@ int main()
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+    glab::getKeyWASD();
   }
 }

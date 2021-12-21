@@ -80,7 +80,7 @@ namespace glab
       ++(*camera);
   }
 
-  void getKeyWSAD()
+  void getKeyWASD()
   {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
       (*camera).ProcessKeyboard(FORWARD, clock.dt);

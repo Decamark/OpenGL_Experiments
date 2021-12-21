@@ -25,14 +25,12 @@ int main()
 
   glab::Cube cube(0.0f, 0.0f, -5.0f, 1.0f);
 
-  glab::Clock clock;
+  glab::clock.start();
   while (!glfwWindowShouldClose(window))
   {
+    glab::clock.tick();
     // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    camera(0);
-    glab::processInput(clock.tick());
 
     grid.draw();
 
@@ -69,5 +67,6 @@ int main()
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+    glab::getKeyWASD();
   }
 }
