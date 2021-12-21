@@ -73,9 +73,11 @@ namespace glab
       glab::export_to_png(window, ss.str().c_str());
     }
 
+    // Switch cameras
     if (GLFW_KEY_0 <= key and key <= GLFW_KEY_9 and action == GLFW_PRESS)
       camera(key - GLFW_KEY_0);
 
+    // Switch projections
     if (key == GLFW_KEY_P and action == GLFW_PRESS)
       ++(*camera);
   }

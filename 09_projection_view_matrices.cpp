@@ -1,5 +1,5 @@
 /**
- * (Physics) 09: Camera
+ * (Physics) 09: Projection & View matrices
  */
 
 #include <functional>
