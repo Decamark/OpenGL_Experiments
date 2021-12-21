@@ -94,7 +94,7 @@ namespace glab
       (*camera).ProcessKeyboard(RIGHT, clock.dt);
   }
 
-  void initWindow(int width, int height, const char* name)
+  void initWindow(int width, int height, const char* name, bool lookable = true, bool scrollable = true, bool typable = true, bool cursor = false)
   {
     // glfw: initialize and configure
     // ------------------------------
@@ -129,12 +129,12 @@ namespace glab
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-    glfwSetKeyCallback(window, keyboard_callback);
+    if (lookable) glfwSetCursorPosCallback(window, mouse_callback);
+    if (scrollable) glfwSetScrollCallback(window, scroll_callback);
+    if (typable) glfwSetKeyCallback(window, keyboard_callback);
 
     // tell GLFW to hide our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (!cursor) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // configure global opengl state
     glEnable(GL_DEPTH_TEST);
