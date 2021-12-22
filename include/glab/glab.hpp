@@ -44,7 +44,7 @@ namespace glab
     }
 
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from top to bottom
 
     lastX = xpos;
     lastY = ypos;
