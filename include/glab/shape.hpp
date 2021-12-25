@@ -160,7 +160,7 @@ namespace glab
     GLenum primitive = GL_TRIANGLES;
     GLenum rasterization = GL_FILL;
     std::vector<unsigned int> textures;
-    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 translation = glm::mat4(1.0f), rotation = glm::mat4(1.0f), model = glm::mat4(1.0f);
 
     // Children with the constructor which doesn't hold initializer lists will call this
     Shape()
@@ -212,7 +212,7 @@ namespace glab
     }
 
     // Set "model" matrix
-    void setM()
+    void setM(glm::mat4 model)
     {
       shader.use();
       shader.setMat4("model", model);
@@ -221,25 +221,26 @@ namespace glab
     // Set the absolute position in the world
     void setPos(float x, float y, float z)
     {
-      model = glm::translate(glm::mat4(1.0), {x,y,z});
-      shader.use();
-      shader.setMat4("model", model);
+      translation = glm::translate(glm::mat4(1.0), {x,y,z});
+    }
+
+    glm::vec3 getPos()
+    {
+      return {translation[0][3], translation[1][3], translation[2][3]};
     }
 
     // Move from the current position
     void translate(glm::vec3 move)
     {
-      model = glm::translate(model, move);
-      shader.use();
-      shader.setMat4("model", model);
+      // (T1*T2)*T3
+      translation = translation * glm::translate(glm::mat4(1.0f), move);
     }
 
     // Rotate at the current position
-    void rotate(float angle, glm::vec3 axis)
+    void rotate(float /* degree */ angle, glm::vec3 axis)
     {
-      model = glm::rotate(model, glm::radians(angle), axis);
-      shader.use();
-      shader.setMat4("model", model);
+      // (R1*R2)*R3
+      rotation = rotation * glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
     }
 
     // Rotate around the center
@@ -333,6 +334,7 @@ namespace glab
 
     void drawElements(GLenum primitive)
     {
+      setM(translation*rotation);
       setV((*camera).GetViewMatrix());
       setP((*camera).GetProjectionMatrix());
 
