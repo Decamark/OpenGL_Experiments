@@ -19,9 +19,6 @@ const float PI = glm::pi<float>();
 glm::vec3 ray = glm::vec3(0.0f);
 // We cannot use glad-related APIs before calling initWindow, so just declare a pointer here
 glab::Cube* cube;
-glm::vec3 axis = {1.0f, 1.0f, 1.0f};
-float theta = 0.0f;
-glm::vec3 Front = {0.0f, 0.0f, 1.0f}, Right = {1.0f, 0.0f, 0.0f}, Up = {0.0f, 1.0f, 0.0f};
 
 // Convert a coordinate in screen space to the one in eye space
 std::pair<double,double> screen2eye(double xpos, double ypos)
@@ -53,16 +50,19 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 
   if (shouldMove)
   {
-    glm::vec3 l = Right * (float) (xe-lastX) + Up * (float) (ye-lastY);
-    axis = glm::normalize(glm::cross(l, Front));
-    float distance = glm::l2Norm(glm::vec3(cube->model[0][3], cube->model[1][3], cube->model[2][3])-(*camera).Position);
-    theta = -glm::degrees( glm::atan(glm::l2Norm(l) * distance / 0.1f) );
+    glm::vec3 l = {xe-lastX, ye-lastY, 0.0f};
+
+    float distance = glm::l2Norm(cube->getPos()-(*camera).Position);
+    float theta = glm::degrees( glm::atan(glm::l2Norm(l) * distance / 0.1f) );
+
+    glm::vec3 axis = glm::vec3(glm::normalize(glm::inverse(cube->rotation) * glm::vec4(glm::cross( glm::vec3(0.0f, 0.0f, 1.0f), l ), 1.0f)));
+    cube->rotation *= glm::rotate(glm::radians(theta), axis);
   }
 
   int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
   if (state == GLFW_PRESS and cube->intersect((*camera).Position, ray))
     shouldMove = true;
-  else
+  else if (state == GLFW_RELEASE)
     shouldMove = false;
 
   lastX = xe;
@@ -91,22 +91,6 @@ int main()
     glab::Line beam((*camera).Position+glm::vec3(0.0f, 0.0f, -0.1f), {1.0f, 0.0f, 0.0f},
                     (*camera).Position+ray,                          {0.0f, 1.0f, 0.0f});
     beam.draw();
-
-    Front = glm::rotate(Front, glm::radians(-theta), axis);
-    Right = glm::rotate(Right, glm::radians(-theta), axis);
-    Up    = glm::rotate(   Up, glm::radians(-theta), axis);
-
-    cube->rotate(theta, axis);
-
-    // glab::Line front(glm::vec3(0.0f, 0.0f, 0.0f), {1.0f, 1.0f, 0.0f}, Front*5.0f, {1.0f, 1.0f, 0.0f}); // yellow
-    glab::Cube front(Front.x*3, Front.y*3, Front.z*3, 1.0f, {1.0f, 1.0f, 0.0f});
-    // glab::Line right(glm::vec3(0.0f, 0.0f, 0.0f), {0.0f, 1.0f, 1.0f}, Right*5.0f, {0.0f, 1.0f, 1.0f}); // cyan
-    glab::Cube right(Right.x*3, Right.y*3, Right.z*3, 1.0f, {0.0f, 1.0f, 1.0f});
-    // glab::Line    up(glm::vec3(0.0f, 0.0f, 0.0f), {1.0f, 0.0f, 1.0f},    Up*5.0f, {1.0f, 0.0f, 1.0f}); // magenta
-    glab::Cube up(Up.x*3, Up.y*3, Up.z*3, 1.0f, {1.0f, 0.0f, 1.0f});
-    front.draw();
-    right.draw();
-       up.draw();
 
     if (cube->intersect((*camera).Position, ray))
       cube->rasterization = GL_FILL;
