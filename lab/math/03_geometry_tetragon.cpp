@@ -1,5 +1,5 @@
 /**
- * (Math) 03: Tetragon
+ * (Math > Geometry) Draw a Tetragon
  */
 
 #include <glab/glab.hpp>
@@ -30,7 +30,7 @@ int main()
 
     grid.draw();
 
-    tetra.draw(/* needGuide = */ true);
+    tetra.draw(/* needGuide */ true);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

@@ -1,5 +1,5 @@
 /**
- * (Math) 10: Sphere
+ * (Math > Geometry) Draw a sphere
  */
 
 #include <glab/glab.hpp>

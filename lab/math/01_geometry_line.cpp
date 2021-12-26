@@ -1,5 +1,5 @@
 /**
- * (Math) 01: Draw a line
+ * (Math > Geometry) Draw a line
  */
 
 #include <glab/glab.hpp>

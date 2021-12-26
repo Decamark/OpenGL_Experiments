@@ -1,5 +1,5 @@
 /**
- * (Math) 02: Draw a triangle
+ * (Math > Geometry) Draw a triangle
  */
 
 #include <glab/glab.hpp>
@@ -19,7 +19,6 @@ int main()
   glab::Grid grid(100.0f);
 
   glab::Triangle tri(5.0f, 5.0f, 5.0f, 5.0f);
-  glab::debug(tri.model);
 
   glab::clock.start();
   while (!glfwWindowShouldClose(window))
@@ -28,7 +27,7 @@ int main()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    tri.draw(/* needGuide = */ true);
+    tri.draw(/* needGuide */ true);
 
     grid.draw();
 
