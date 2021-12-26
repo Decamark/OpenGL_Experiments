@@ -160,7 +160,7 @@ namespace glab
     GLenum primitive = GL_TRIANGLES;
     GLenum rasterization = GL_FILL;
     std::vector<unsigned int> textures;
-    glm::mat4 translation = glm::mat4(1.0f), rotation = glm::mat4(1.0f), model = glm::mat4(1.0f);
+    glm::mat4 translation = glm::mat4(1.0f), rotation = glm::mat4(1.0f);
 
     // Children with the constructor which doesn't hold initializer lists will call this
     Shape()
@@ -168,11 +168,11 @@ namespace glab
       // shape
       shader = Shader3dColor();
       shader.use();
-      shader.setMat4("model", model);
+      shader.setMat4("model", translation*rotation);
 
       // guide
       guide_shader.use();
-      guide_shader.setMat4("model", model);
+      guide_shader.setMat4("model", translation*rotation);
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
@@ -181,11 +181,11 @@ namespace glab
     {
       // shape
       shader.use();
-      shader.setMat4("model", model);
+      shader.setMat4("model", translation*rotation);
 
       // guide
       guide_shader.use();
-      guide_shader.setMat4("model", model);
+      guide_shader.setMat4("model", translation*rotation);
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
@@ -284,11 +284,11 @@ namespace glab
         // This is a's local coordinate
         glm::vec4 a_ = { vertices[ stride*indices[i] ],   vertices[ stride*indices[i]+1 ], vertices[ stride*indices[i]+2 ],     1.0f };
         // This is the world coordinate
-        glm::vec3 a(model * a_);
+        glm::vec3 a(translation*rotation * a_);
         glm::vec4 b_ = { vertices[ stride*indices[i+1] ], vertices[ stride*indices[i+1]+1 ], vertices[ stride*indices[i+1]+2 ], 1.0f };
-        glm::vec3 b(model * b_);
+        glm::vec3 b(translation*rotation * b_);
         glm::vec4 c_ = { vertices[ stride*indices[i+2] ], vertices[ stride*indices[i+2]+1 ], vertices[ stride*indices[i+2]+2 ], 1.0f };
-        glm::vec3 c(model * c_);
+        glm::vec3 c(translation*rotation * c_);
 
         glm::vec3 ab = b - a;
         glm::vec3 ac = c - a;
@@ -388,40 +388,41 @@ namespace glab
 
       std::vector<float> guide_vs(36, 0.0f);
 
-      guide_vs[0]  = model[3][0];
-      guide_vs[1]  = model[3][1];
-      guide_vs[2]  = model[3][2];
+      glm::vec3 pos = getPos();
+      guide_vs[0]  = pos.x;
+      guide_vs[1]  = pos.y;
+      guide_vs[2]  = pos.z;
       guide_vs[3]  = 1.0f;
       guide_vs[4]  = 0.0f;
       guide_vs[5]  = 0.0f;
       guide_vs[6]  = 0.0f;
-      guide_vs[7]  = model[3][1];
-      guide_vs[8]  = model[3][2];
+      guide_vs[7]  = pos.y;
+      guide_vs[8]  = pos.z;
       guide_vs[9]  = 1.0f;
       guide_vs[10] = 0.0f;
       guide_vs[11] = 0.0f;
 
-      guide_vs[12] = model[3][0];
-      guide_vs[13] = model[3][1];
-      guide_vs[14] = model[3][2];
+      guide_vs[12] = pos.x;
+      guide_vs[13] = pos.y;
+      guide_vs[14] = pos.z;
       guide_vs[15] = 0.0f;
       guide_vs[16] = 1.0f;
       guide_vs[17] = 0.0f;
-      guide_vs[18] = model[3][0];
+      guide_vs[18] = pos.x;
       guide_vs[19] = 0.0f;
-      guide_vs[20] = model[3][2];
+      guide_vs[20] = pos.z;
       guide_vs[21] = 0.0f;
       guide_vs[22] = 1.0f;
       guide_vs[23] = 0.0f;
 
-      guide_vs[24] = model[3][0];
-      guide_vs[25] = model[3][1];
-      guide_vs[26] = model[3][2];
+      guide_vs[24] = pos.x;
+      guide_vs[25] = pos.y;
+      guide_vs[26] = pos.z;
       guide_vs[27] = 0.0f;
       guide_vs[28] = 0.0f;
       guide_vs[29] = 1.0f;
-      guide_vs[30] = model[3][0];
-      guide_vs[31] = model[3][1];
+      guide_vs[30] = pos.x;
+      guide_vs[31] = pos.y;
       guide_vs[32] = 0.0f;
       guide_vs[33] = 0.0f;
       guide_vs[34] = 0.0f;
