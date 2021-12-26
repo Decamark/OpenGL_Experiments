@@ -55,8 +55,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
     float distance = glm::l2Norm(cube->getPos()-(*camera).Position);
     float theta = glm::degrees( glm::atan(glm::l2Norm(l) * distance / 0.1f) );
 
-    glm::vec3 axis = glm::vec3(glm::normalize(glm::inverse(cube->rotation) * glm::vec4(glm::cross( glm::vec3(0.0f, 0.0f, 1.0f), l ), 1.0f)));
-    cube->rotation *= glm::rotate(glm::radians(theta), axis);
+    cube->rotateAbs(theta, glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), l));
   }
 
   int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);

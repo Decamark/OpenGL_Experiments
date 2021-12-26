@@ -251,6 +251,14 @@ namespace glab
       translate(center);
     }
 
+    // Rotate at the current position (axis is the absolute axis; right-handed coordinate)
+    void rotateAbs(float /* degree */ angle, glm::vec3 axis)
+    {
+      // Revised axis; Though it's applied the inverse rotation, it becomes "axis" after the rotation
+      glm::vec3 revised = glm::vec3(glm::normalize(glm::inverse(rotation) * glm::vec4(axis, 1.0f)));
+      rotate(angle, revised);
+    }
+
     void move(std::function<void(double)> motion, double t)
     {
       motion(t);
