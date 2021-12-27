@@ -40,3 +40,4 @@ Most of the experiments support the following user input.
 | 03 | Geometry | Draw a tetragon. ![math_03.png](./images/math_03.png) |
 | 04 | Geometry | Draw a sphere. ![math_04.png](./images/math_04.png) |
 | 10 | Geometry | Multiple rotations ![math_10.png](./images/math_10.png) |
+| 11 | Geometry | Detect intersections between a ray and a triangle. ![math_11.png](./images/math_11.png) |

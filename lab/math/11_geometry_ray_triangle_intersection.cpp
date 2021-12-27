@@ -1,5 +1,5 @@
 /**
- * (Math) 11: Detect intersections between a ray and a triangle
+ * (Math > Geometry) Detect intersections between a ray and a triangle
  */
 
 #include <functional>
