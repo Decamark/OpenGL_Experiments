@@ -244,12 +244,13 @@ namespace glab
       rotation = rotation * glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
     }
 
-    // Rotate around the center
+    // Rotate around the axis designating center as the origin
     void rotateAround(float angle, glm::vec3 axis, glm::vec3 center)
     {
-      translate(-center);
+      // [NOTICE] Note that we need to apply translation to the "rotation" matrix
+      rotation *= glm::translate(glm::mat4(1.0f), -center);
       rotate(angle, axis);
-      translate(center);
+      rotation *= glm::translate(glm::mat4(1.0f), center);
     }
 
     // Rotate at the current position (axis is the absolute axis; right-handed coordinate)
