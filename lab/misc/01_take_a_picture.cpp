@@ -1,5 +1,5 @@
 /**
- * (Misc) 04: Take a picture by pressing "T"
+ * (Misc) Take a picture by pressing "T"
  */
 
 #include <glab/glab.hpp>

@@ -55,4 +55,8 @@ Most of the experiments support the following user input.
 | 02 | CG       | Orthographic projection. Play with different projection matrices by pressing "P". ![cs_02.png](./images/cs_02.png) |
 
 ## Misc
-| 02 | CG       | Multiple cameras. Switch cameras by pressing numbers. |
+| No | Category | Experiment |
+|----|----------|------------|
+| 01 | -        | Take a picture |
+| 02 | -        | Multiple cameras. Switch cameras by pressing numbers. |
+| 03 | Art      | You can "touch" a cube with mouse. ![misc_03.png](./images/misc_03.png) |

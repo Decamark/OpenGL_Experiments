@@ -1,5 +1,5 @@
 /**
- * (CS > CG) Multiple cameras. Switch cameras by pressing numbers.
+ * (Misc) Multiple cameras. Switch cameras by pressing numbers.
  */
 
 #include <glab/glab.hpp>
