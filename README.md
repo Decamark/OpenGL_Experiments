@@ -41,3 +41,8 @@ Most of the experiments support the following user input.
 | 04 | Geometry | Draw a sphere. ![math_04.png](./images/math_04.png) |
 | 10 | Geometry | Multiple rotations ![math_10.png](./images/math_10.png) |
 | 11 | Geometry | Detect intersections between a ray and a triangle. ![math_11.png](./images/math_11.png) |
+
+## Physics
+| No | Category  | Experiment |
+|----|-----------|------------|
+| 01 | Mechanics | Time simulation. The motion of the cube only depends on time: the longer the interval between frame changes, the more the clock advances. ![physics_01.png](./images/physics_01.png) |
