@@ -97,6 +97,7 @@ namespace glab
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     return ebo;
   }
@@ -226,7 +227,7 @@ namespace glab
 
     glm::vec3 getPos()
     {
-      return {translation[0][3], translation[1][3], translation[2][3]};
+      return {translation[3][0], translation[3][1], translation[3][2]};
     }
 
     // Move from the current position
