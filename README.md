@@ -46,3 +46,4 @@ Most of the experiments support the following user input.
 | No | Category  | Experiment |
 |----|-----------|------------|
 | 01 | Mechanics | Time simulation. The motion of the cube only depends on time: the longer the interval between frame changes, the more the clock advances. ![physics_01.png](./images/physics_01.png) |
+| 02 | Mechanics | Simulation of free fall ![physics_02.png](./images/physics_02.png) |

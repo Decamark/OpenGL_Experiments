@@ -1,5 +1,5 @@
 /**
- * (Physics) 08: Simulation of free fall
+ * (Physics > Mechanics) Simulation of free fall
  */
 
 #include <functional>
@@ -20,27 +20,31 @@ int main()
 
   glab::Grid grid(100.0f);
 
-  glab::Cube  cube(10.0f, 100.0f, 10.0f, 5.0f);
-  glab::Cube cube2(10.0f, 100.0f, 10.0f, 5.0f);
+  glab::Cube cube1(10.0f, 100.0f, 10.0f, 5.0f);
+  glab::Cube cube2(20.0f, 100.0f, 10.0f, 5.0f);
 
   glab::clock.start();
   while (!glfwWindowShouldClose(window))
   {
-    glab::clock.tick();
+    float dt = glab::clock.tick();
     std::cout << glab::clock.t << std::endl;
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    std::function<void(double)> motion = [&cube](double t) {
-      float h = cube.y0-9.8/2*t*t;
+    // Precise simulation
+    std::function<void(double)> motion = [&cube1](double t) {
+      float h = cube1.y0-9.8/2*t*t;
       if (h >= 0)
-        cube.setPos(cube.x0,    h, cube.z0);
+        cube1.setPos(cube1.x0,    h, cube1.z0);
       else
-        cube.setPos(cube.x0, 0.0f, cube.z0);
+        cube1.setPos(cube1.x0, 0.0f, cube1.z0);
     };
-    cube.move(motion, glab::clock.t);
-    cube.draw(/* needGuide */ true);
+    cube1.move(motion, glab::clock.t);
+    cube1.draw(/* needGuide */ true);
 
+    // Assume that the instantaneous velocity is constant for dt
+    if (cube2.getPos().y >= 0)
+      cube2.translate({0.0f, -9.8f*glab::clock.t*dt, 0.0f});
     cube2.draw(/* needGuide */ true);
 
     grid.draw();
