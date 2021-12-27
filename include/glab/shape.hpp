@@ -227,7 +227,8 @@ namespace glab
 
     glm::vec3 getPos()
     {
-      return {translation[3][0], translation[3][1], translation[3][2]};
+      glm::mat4 trans = translation*rotation;
+      return {trans[3][0], trans[3][1], trans[3][2]};
     }
 
     // Move from the current position
@@ -391,6 +392,8 @@ namespace glab
 
     void drawGuide()
     {
+      // No setM because guide lines stretch. This isn't the rotation or the translation.
+      // We don't transform guides but attach guides to transformed shapes.
       setV((*camera).GetViewMatrix());
       setP((*camera).GetProjectionMatrix());
 
