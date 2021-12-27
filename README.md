@@ -39,4 +39,4 @@ Most of the experiments support the following user input.
 | 02 | Geometry | Draw a triangle. ![math_02.png](./images/math_02.png) |
 | 03 | Geometry | Draw a tetragon. ![math_03.png](./images/math_03.png) |
 | 04 | Geometry | Draw a sphere. ![math_04.png](./images/math_04.png) |
-| 10 | Geometry | rotation & translation ![math_10.png](./images/math_10.png) |
+| 10 | Geometry | Multiple rotations ![math_10.png](./images/math_10.png) |
