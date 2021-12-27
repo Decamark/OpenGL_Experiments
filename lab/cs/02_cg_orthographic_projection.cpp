@@ -1,5 +1,5 @@
 /**
- * (Physics) 10: Orthographic projection (Play with different projection matrices by pressing "P")
+ * (CS > CG) Orthographic projection. Play with different projection matrices by pressing "P"
  */
 
 #include <glab/glab.hpp>

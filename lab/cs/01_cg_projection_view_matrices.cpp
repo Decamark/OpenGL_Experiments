@@ -1,5 +1,5 @@
 /**
- * (Physics) 09: Projection & View matrices
+ * (CS > CG) Projection & view matrices
  */
 
 #include <functional>
@@ -58,9 +58,9 @@ int main()
     //
     // So glm::perspective assumes the right-handed coordinates and produces the left-handed coordinates
     std::cout << "[Check that xz-axes are swithed by moving around]" << std::endl;
-    glab::debug(projection * camera[0].GetViewMatrix() * cube.model * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f));
+    glab::debug(projection * camera[0].GetViewMatrix() * cube.translation*cube.rotation * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f));
 
-    // ex 4) Camera is directed to the x-axis at first
+    // ex 4) Camera is directed along the x-axis at first
     // This is because a vector (cos(theta), 0) is along the x-axis
     std::cout << "[Camera's direction]" << std::endl;
     glab::debug((*camera).GetViewMatrix());

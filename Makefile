@@ -29,6 +29,11 @@ physics:
 	-I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
 	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./lab/physics/$(no)_*.cpp)
 
+cs:
+	g++ -std=c++17 -fsanitize=address -D_GLIBCXX_DEBUG -fsanitize=undefined -D_GLIBCXX_DEBUG_PEDANTIC \
+	-I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \
+	glad.c ./include/stb/stb_image.cpp ./include/stb/stb_image_write.cpp $(wildcard ./lab/cs/$(no)_*.cpp)
+
 misc:
 	g++ -std=c++17 -fsanitize=address -D_GLIBCXX_DEBUG -fsanitize=undefined -D_GLIBCXX_DEBUG_PEDANTIC \
 	-I/usr/local/ -I./include/ -L/usr/local -lglfw -framework OpenGL \

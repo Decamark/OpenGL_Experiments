@@ -1,5 +1,5 @@
 /**
- * (Physics) 11: Multiple cameras (Switch cameras by pressing numbers)
+ * (CS > CG) Multiple cameras. Switch cameras by pressing numbers.
  */
 
 #include <glab/glab.hpp>

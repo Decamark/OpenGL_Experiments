@@ -47,3 +47,12 @@ Most of the experiments support the following user input.
 |----|-----------|------------|
 | 01 | Mechanics | Time simulation. The motion of the cube only depends on time: the longer the interval between frame changes, the more the clock advances. ![physics_01.png](./images/physics_01.png) |
 | 02 | Mechanics | Simulation of free fall ![physics_02.png](./images/physics_02.png) |
+
+## Computer Science
+| No | Category | Experiment |
+|----|----------|------------|
+| 01 | CG       | Learn how matrices is like in each space ![cs_01.png](./images/cs_01.png) |
+| 02 | CG       | Orthographic projection. Play with different projection matrices by pressing "P". ![cs_02.png](./images/cs_02.png) |
+
+## Misc
+| 02 | CG       | Multiple cameras. Switch cameras by pressing numbers. |
