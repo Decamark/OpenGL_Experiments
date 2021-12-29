@@ -5,9 +5,9 @@
 #include <functional>
 #include <numeric>
 
-#include <glab/glab.hpp>
-
 #include <learnopengl/shader_m.h>
+
+#include <glab/glab.hpp>
 
 namespace glab
 {
@@ -248,10 +248,14 @@ namespace glab
     // Rotate around the axis designating center as the origin
     void rotateAround(float angle, glm::vec3 axis, glm::vec3 center)
     {
-      // [NOTICE] Note that we need to apply translation to the "rotation" matrix
-      rotation *= glm::translate(glm::mat4(1.0f), -center);
-      rotate(angle, axis);
-      rotation *= glm::translate(glm::mat4(1.0f), center);
+      // Adjust center to the origin (0, 0, 0)
+      translate(-center);
+      glm::mat4 RT = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * translation;
+      // Separate rotation and translation from the transformation
+      rotation *= glm::mat4(glm::mat3(RT));
+      translation[3] = RT[3];
+      // Move center to the former coordinate
+      translate(center);
     }
 
     // Rotate at the current position (axis is the absolute axis; right-handed coordinate)
