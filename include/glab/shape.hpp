@@ -234,15 +234,15 @@ namespace glab
     // Move from the current position
     void translate(glm::vec3 move)
     {
-      // (T1*T2)*T3
-      translation = translation * glm::translate(glm::mat4(1.0f), move);
+      // T3*(T2*T1): T1 -> T2 -> T3
+      translation = glm::translate(glm::mat4(1.0f), move) * translation;
     }
 
     // Rotate at the current position
     void rotate(float /* degree */ angle, glm::vec3 axis)
     {
-      // (R1*R2)*R3
-      rotation = rotation * glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
+      // R3*(R2*R1): R1 -> R2 -> R3
+      rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * rotation;
     }
 
     // Rotate around the axis designating center as the origin
@@ -250,10 +250,13 @@ namespace glab
     {
       // Adjust center to the origin (0, 0, 0)
       translate(-center);
-      glm::mat4 RT = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * translation;
+      glm::mat4 RT =
+        // Rotating the axis lets us specify the relative direction of rotation
+        glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(rotation*glm::vec4(axis, 1.0f))) *
+        translation;
       // Separate rotation and translation from the transformation
       rotation *= glm::mat4(glm::mat3(RT));
-      translation[3] = RT[3];
+      // translation[3] = RT[3];
       // Move center to the former coordinate
       translate(center);
     }
