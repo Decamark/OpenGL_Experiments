@@ -234,12 +234,27 @@ namespace glab
     // Move from the current position
     void translate(glm::vec3 move)
     {
-      // T3*(T2*T1): T1 -> T2 -> T3
-      translation = glm::translate(glm::mat4(1.0f), move) * translation;
+      // (T1*T2)*T3
+      translation *= glm::translate(glm::mat4(1.0f), move);
     }
 
     // Rotate at the current position
     void rotate(float /* degree */ angle, glm::vec3 axis)
+    {
+      // (R1*R2)*R3: R3 -> R2 -> R1
+      rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
+    }
+
+    // Rotate at the current position (axis is the absolute axis; right-handed coordinate)
+    // void rotateAbs(float /* degree */ angle, glm::vec3 axis)
+    // {
+    //   // Revised axis; Though it's applied the inverse rotation, it becomes "axis" after the rotation
+    //   glm::vec3 revised = glm::vec3(glm::normalize(glm::inverse(rotation) * glm::vec4(axis, 1.0f)));
+    //   rotate(angle, revised);
+    // }
+
+    // Axes are absolute to the world's coordinate
+    void rotateAbs(float /* degree */ angle, glm::vec3 axis)
     {
       // R3*(R2*R1): R1 -> R2 -> R3
       rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * rotation;
@@ -250,23 +265,28 @@ namespace glab
     {
       // Adjust center to the origin (0, 0, 0)
       translate(-center);
-      glm::mat4 RT =
-        // Rotating the axis lets us specify the relative direction of rotation
-        glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(rotation*glm::vec4(axis, 1.0f))) *
-        translation;
-      // Separate rotation and translation from the transformation
-      rotation *= glm::mat4(glm::mat3(RT));
-      // translation[3] = RT[3];
-      // Move center to the former coordinate
-      translate(center);
-    }
+      // glm::mat4 RT =
+      //   // Rotating the axis lets us specify the relative direction of rotation
+      //   // glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(rotation*glm::vec4(axis, 1.0f))) *
+      //   glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(rotation*glm::vec4(axis, 1.0f))) *
+      //   translation;
 
-    // Rotate at the current position (axis is the absolute axis; right-handed coordinate)
-    void rotateAbs(float /* degree */ angle, glm::vec3 axis)
-    {
-      // Revised axis; Though it's applied the inverse rotation, it becomes "axis" after the rotation
-      glm::vec3 revised = glm::vec3(glm::normalize(glm::inverse(rotation) * glm::vec4(axis, 1.0f)));
-      rotate(angle, revised);
+      // glm::mat4 RT =
+      //   rotation *
+      //   glm::rotate(glm::mat4(1.0f),
+      //               glm::radians(angle),
+      //               axis) *
+      //   glm::inverse(rotation) * translation;
+
+      // Separate rotation and translation from the transformation
+
+      translation = glm::inverse(rotation) * translation;
+      rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
+      translation[3] = (rotation*translation)[3];
+      // translation[3] = RT[3];
+
+// Move center to the former coordinate
+      translate(center);
     }
 
     void move(std::function<void(double)> motion, double t)
