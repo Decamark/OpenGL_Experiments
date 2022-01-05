@@ -161,7 +161,8 @@ namespace glab
     GLenum primitive = GL_TRIANGLES;
     GLenum rasterization = GL_FILL;
     std::vector<unsigned int> textures;
-    glm::mat4 translation = glm::mat4(1.0f), rotation = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
+    // glm::mat4 translation = glm::mat4(1.0f), rotation = glm::mat4(1.0f);
 
     // Children with the constructor which doesn't hold initializer lists will call this
     Shape()
@@ -169,11 +170,11 @@ namespace glab
       // shape
       shader = Shader3dColor();
       shader.use();
-      shader.setMat4("model", translation*rotation);
+      setM(model);
 
       // guide
       guide_shader.use();
-      guide_shader.setMat4("model", translation*rotation);
+      guide_shader.setMat4("model", glm::mat4(1.0f));
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
@@ -182,11 +183,11 @@ namespace glab
     {
       // shape
       shader.use();
-      shader.setMat4("model", translation*rotation);
+      setM(model);
 
       // guide
       guide_shader.use();
-      guide_shader.setMat4("model", translation*rotation);
+      guide_shader.setMat4("model", glm::mat4(1.0f));
       std::vector<float> guide_vs(36, 0.0f);
       std::tie(guide_vao, guide_vbo) = partition(guide_vs, 2, 3, 3);
     }
@@ -222,27 +223,26 @@ namespace glab
     // Set the absolute position in the world
     void setPos(float x, float y, float z)
     {
-      translation = glm::translate(glm::mat4(1.0), {x,y,z});
+      model[3] = glm::vec4(x, y, z, 1.0f);
     }
 
     glm::vec3 getPos()
     {
-      glm::mat4 trans = translation*rotation;
-      return {trans[3][0], trans[3][1], trans[3][2]};
+      return model[3];
     }
 
     // Move from the current position
     void translate(glm::vec3 move)
     {
       // (T1*T2)*T3
-      translation *= glm::translate(glm::mat4(1.0f), move);
+      model *= glm::translate(glm::mat4(1.0f), move);
     }
 
     // Rotate at the current position
     void rotate(float /* degree */ angle, glm::vec3 axis)
     {
       // (R1*R2)*R3: R3 -> R2 -> R1
-      rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
+      model *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
     }
 
     // Rotate at the current position (axis is the absolute axis; right-handed coordinate)
@@ -257,35 +257,17 @@ namespace glab
     void rotateAbs(float /* degree */ angle, glm::vec3 axis)
     {
       // R3*(R2*R1): R1 -> R2 -> R3
-      rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * rotation;
+      model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * model;
     }
 
     // Rotate around the axis designating center as the origin
-    void rotateAround(float angle, glm::vec3 axis, glm::vec3 center)
+    void rotateAround(float /* degree */ angle, glm::vec3 axis, glm::vec3 center)
     {
       // Adjust center to the origin (0, 0, 0)
       translate(-center);
-      // glm::mat4 RT =
-      //   // Rotating the axis lets us specify the relative direction of rotation
-      //   // glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(rotation*glm::vec4(axis, 1.0f))) *
-      //   glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(rotation*glm::vec4(axis, 1.0f))) *
-      //   translation;
-
-      // glm::mat4 RT =
-      //   rotation *
-      //   glm::rotate(glm::mat4(1.0f),
-      //               glm::radians(angle),
-      //               axis) *
-      //   glm::inverse(rotation) * translation;
-
-      // Separate rotation and translation from the transformation
-
-      translation = glm::inverse(rotation) * translation;
-      rotation *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
-      translation[3] = (rotation*translation)[3];
-      // translation[3] = RT[3];
-
-// Move center to the former coordinate
+      glm::mat4 R = glm::mat4(glm::mat3(model));
+      model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(R*glm::vec4(axis, 1.0f))) * model;
+      // Move center to the former coordinate
       translate(center);
     }
 
@@ -322,11 +304,11 @@ namespace glab
         // This is a's local coordinate
         glm::vec4 a_ = { vertices[ stride*indices[i] ],   vertices[ stride*indices[i]+1 ], vertices[ stride*indices[i]+2 ],     1.0f };
         // This is the world coordinate
-        glm::vec3 a(translation*rotation * a_);
+        glm::vec3 a(model * a_);
         glm::vec4 b_ = { vertices[ stride*indices[i+1] ], vertices[ stride*indices[i+1]+1 ], vertices[ stride*indices[i+1]+2 ], 1.0f };
-        glm::vec3 b(translation*rotation * b_);
+        glm::vec3 b(model * b_);
         glm::vec4 c_ = { vertices[ stride*indices[i+2] ], vertices[ stride*indices[i+2]+1 ], vertices[ stride*indices[i+2]+2 ], 1.0f };
-        glm::vec3 c(translation*rotation * c_);
+        glm::vec3 c(model * c_);
 
         glm::vec3 ab = b - a;
         glm::vec3 ac = c - a;
@@ -372,7 +354,7 @@ namespace glab
 
     void drawElements(GLenum primitive)
     {
-      setM(translation*rotation);
+      setM(model);
       setV((*camera).GetViewMatrix());
       setP((*camera).GetProjectionMatrix());
 
